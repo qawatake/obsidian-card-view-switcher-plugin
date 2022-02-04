@@ -1,4 +1,6 @@
-import { Plugin } from 'obsidian';
+import { Plugin, TFile } from 'obsidian';
+import Modal from 'ui/Modal.svelte';
+import * as store from 'ui/store';
 // Remember to rename these classes and interfaces!
 
 interface MyPluginSettings {
@@ -16,9 +18,21 @@ export default class CardViewSwitcherPlugin extends Plugin {
 		await this.loadSettings();
 
 		this.app.scope.register(['Ctrl'], 'a', () => {
-			const files = this.app.workspace.getLastOpenFiles();
-			files.forEach((file) => {
-				console.log(file);
+			const paths = this.app.workspace.getLastOpenFiles();
+			const files: TFile[] = [];
+			paths.forEach((path) => {
+				const file = this.app.vault.getAbstractFileByPath(path);
+				if (file instanceof TFile) {
+					files.push(file);
+				}
+			});
+
+			store.app.set(this.app);
+			new Modal({
+				target: document.body,
+				props: {
+					files: files,
+				},
 			});
 		});
 
