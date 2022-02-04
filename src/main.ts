@@ -1,5 +1,4 @@
 import { Plugin } from 'obsidian';
-
 // Remember to rename these classes and interfaces!
 
 interface MyPluginSettings {
@@ -10,7 +9,7 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 	mySetting: 'default',
 };
 
-export default class MyPlugin extends Plugin {
+export default class CardViewSwitcherPlugin extends Plugin {
 	settings: MyPluginSettings | undefined;
 
 	override async onload() {
@@ -27,7 +26,7 @@ export default class MyPlugin extends Plugin {
 		// this.addSettingTab(new SampleSettingTab(this.app, this));
 	}
 
-	override onunload() {}
+	// override onunload() {}
 
 	async loadSettings() {
 		this.settings = Object.assign(
@@ -41,22 +40,6 @@ export default class MyPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 }
-
-// class SampleModal extends Modal {
-// 	constructor(app: App) {
-// 		super(app);
-// 	}
-
-// 	onOpen() {
-// 		const { contentEl } = this;
-// 		contentEl.setText('Woah!');
-// 	}
-
-// 	onClose() {
-// 		const { contentEl } = this;
-// 		contentEl.empty();
-// 	}
-// }
 
 // class SampleSettingTab extends PluginSettingTab {
 // 	plugin: MyPlugin;
