@@ -53,16 +53,22 @@
 		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 		border-radius: 10px;
 		cursor: pointer;
+		background-color: var(--background-primary);
+		box-sizing: content-box;
 	}
 
 	.card-container:hover {
-		top: -2px;
-		box-shadow: 0 4px 5px var(--interactive-accent);
+		/* top: -2px;
+		box-shadow: 0 4px 5px var(--interactive-accent); */
+		border: 5px solid var(--interactive-accent);
+		margin: -5px;
 	}
 
 	.card-container.is-selected {
-		top: -2px;
-		box-shadow: 0 4px 5px var(--interactive-accent);
+		/* top: -2px;
+		box-shadow: 0 4px 5px var(--interactive-accent); */
+		border: 5px solid var(--interactive-accent);
+		margin: -5px;
 	}
 
 	.file-name-container {

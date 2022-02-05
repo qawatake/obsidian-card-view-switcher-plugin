@@ -99,10 +99,13 @@
 		height: 100%;
 		z-index: var(--layer-modal);
 
-		max-width: unset;
 		padding: 30px 50px;
+		background-color: var(--background-modifier-cover);
 
-		background-color: var(--background-primary);
+		/* reset the default obsidian style */
+		max-width: unset;
+		border-radius: unset;
+		border: unset;
 	}
 
 	.prompt-container {
