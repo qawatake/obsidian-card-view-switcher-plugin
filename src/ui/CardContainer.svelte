@@ -1,16 +1,18 @@
 <script lang="ts">
 	import { app } from 'ui/store';
 	import type { TFile } from 'obsidian';
-	import { onDestroy, onMount } from 'svelte';
+	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import { ViewGenerator } from 'interfaces/ViewGenerator';
 
 	// props
 	export let id: number;
 	export let file: TFile;
+	export let selected: boolean;
 
 	// internal variables
 	let contentContainerEl: HTMLElement;
 	let renderer: ViewGenerator;
+	const dispatch = createEventDispatcher();
 
 	onMount(async () => {
 		renderer = await new ViewGenerator($app, contentContainerEl, file).load(
@@ -21,9 +23,19 @@
 	onDestroy(() => {
 		renderer.unload();
 	});
+
+	function onClicked() {
+		dispatch('click');
+	}
 </script>
 
-<div class="card-container" data-id={id} data-path={file.path}>
+<div
+	class="card-container"
+	class:is-selected={selected}
+	data-id={id}
+	data-path={file.path}
+	on:click={onClicked}
+>
 	<div class="file-name-container">{file.basename}</div>
 
 	<div class="content-container-wrapper">

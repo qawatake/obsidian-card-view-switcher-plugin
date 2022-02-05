@@ -1,23 +1,72 @@
 <script lang="ts">
-	import type { TFile } from 'obsidian';
+	import type { SplitDirection, TFile } from 'obsidian';
+	import { onDestroy, onMount } from 'svelte';
+	import type { Unsubscriber } from 'svelte/store';
 	import CardContainer from 'ui/CardContainer.svelte';
+	import { app, selectedCardId } from 'ui/store';
+
+	// const
+	const CARDS_PER_PAGE = 10;
+
+	// subscribe
+	const unsubscribers: Unsubscriber[] = [];
+	let selected: number | undefined;
+	unsubscribers.push(selectedCardId.subscribe((id) => (selected = id)));
 
 	// props
 	export let files: TFile[];
+
+	// internal variables
+	let containerEl: HTMLElement;
+	let inputEl: HTMLInputElement;
+
+	onMount(() => {
+		inputEl.focus();
+	});
+
+	onDestroy(() => {
+		unsubscribers.forEach((unsubscriber) => unsubscriber());
+	});
+
+	async function onSelected(direction?: SplitDirection) {
+		if (selected === undefined) {
+			return;
+		}
+		const file = files[selected];
+		if (file === undefined) {
+			return;
+		}
+		await openFile(file, direction);
+		containerEl.remove();
+	}
+
+	async function openFile(file: TFile, direction?: SplitDirection) {
+		const leaf =
+			direction === undefined
+				? $app.workspace.getMostRecentLeaf()
+				: $app.workspace.splitActiveLeaf(direction);
+		await leaf.openFile(file);
+		$app.workspace.setActiveLeaf(leaf, true, true);
+	}
 </script>
 
-<div class="modal">
+<div class="modal" bind:this={containerEl}>
 	<div class="prompt-container">
-		<!-- <div class="prompt-input" /> -->
-		<input class="prompt-input" />
+		<input class="prompt-input" bind:this={inputEl} />
 		<div class="prompt-instruction" />
 	</div>
 
 	<div class="cards-container">
-		{#each files as file, id}
-			{#if id < 10}
-				<CardContainer {id} {file} />
-			{/if}
+		{#each files.slice(0, CARDS_PER_PAGE) as file, id}
+			<CardContainer
+				{id}
+				{file}
+				selected={selected === id}
+				on:click={() => {
+					selectedCardId.set(id);
+					onSelected();
+				}}
+			/>
 		{/each}
 	</div>
 </div>
