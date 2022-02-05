@@ -66,7 +66,8 @@
 	.content-container-wrapper {
 		padding: 5px;
 		flex: 1;
-		height: 100px;
+		height: 100%;
+		min-height: 0;
 	}
 
 	.content-container {
@@ -77,42 +78,63 @@
 		line-height: 1.2;
 	}
 
-	.content-container div,
-	p,
-	li,
-	code {
+	.content-container :global(div),
+	:global(p),
+	:global(li),
+	:global(code) {
 		font-size: 0.8rem;
 		line-height: 1.2;
 	}
 
-	.content-container h2,
-	h3,
-	h4,
-	h5,
-	h6 {
+	.content-container :global(h1) {
+		font-size: 1rem;
+		line-height: 1.2;
+		margin: 5px;
+	}
+	.content-container :global(h2) {
+		font-size: 1rem;
+		line-height: 1.2;
+		margin: 5px;
+	}
+	.content-container :global(h3) {
+		font-size: 1rem;
+		line-height: 1.2;
+		margin: 5px;
+	}
+	.content-container :global(h4) {
+		font-size: 1rem;
+		line-height: 1.2;
+		margin: 5px;
+	}
+	.content-container :global(h5) {
+		font-size: 1rem;
+		line-height: 1.2;
+		margin: 5px;
+	}
+	.content-container :global(h6) {
 		font-size: 1rem;
 		line-height: 1.2;
 		margin: 5px;
 	}
 
-	.content-container a {
+	.content-container :global(a) {
 		pointer-events: none;
 	}
 
 	/* modify preview */
-	div.workspace-leaf {
+	.content-container :global(.workspace-leaf) {
 		contain: initial !important;
 	}
-	div.workspace-leaf-resize-handle {
+	.content-container :global(.workspace-leaf-resize-handle) {
 		display: none;
 	}
-	div.view-header {
+	.content-container :global(.view-header) {
 		display: none;
 	}
-	div.markdown-preview-view {
+	.content-container :global(.markdown-preview-view) {
 		padding: 0;
 	}
-	div.modal-content {
+	.content-container :global(.modal-content) {
 		margin: 0;
 	}
 </style>
