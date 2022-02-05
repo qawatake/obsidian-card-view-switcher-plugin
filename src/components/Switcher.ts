@@ -38,9 +38,6 @@ export class Switcher extends Component {
 		store.switcherComponent.set(this);
 		this.modal = new Modal({
 			target: document.body,
-			props: {
-				files: files,
-			},
 		});
 	}
 

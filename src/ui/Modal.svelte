@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SplitDirection, TFile } from 'obsidian';
+	import { prepareFuzzySearch, TFile, type SplitDirection } from 'obsidian';
 	import { onDestroy, onMount } from 'svelte';
 	import CardContainer from 'ui/CardContainer.svelte';
 	import { app, switcherComponent } from 'ui/store';
@@ -10,12 +10,17 @@
 	// props
 	export let files: TFile[];
 
-	// internal variables
+	// bind
 	let containerEl: HTMLElement;
 	let inputEl: HTMLInputElement;
+	let query = '';
 
 	// state variables
 	let selected: number | undefined = undefined;
+	let page = 0;
+
+	// onload
+	$: onInputChange(query);
 
 	onMount(() => {
 		inputEl.focus();
@@ -55,6 +60,17 @@
 		containerEl.remove();
 	}
 
+	function renderRecentFiles() {
+		const paths = $app.workspace.getLastOpenFiles();
+		files = [];
+		paths.forEach((path) => {
+			const file = $app.vault.getAbstractFileByPath(path);
+			if (file instanceof TFile) {
+				files.push(file);
+			}
+		});
+	}
+
 	async function openFile(file: TFile, direction?: SplitDirection) {
 		const leaf =
 			direction === undefined
@@ -63,16 +79,60 @@
 		await leaf.openFile(file);
 		$app.workspace.setActiveLeaf(leaf, true, true);
 	}
+
+	function onInputChange(query: string) {
+		selected = 0;
+
+		if (query === '') {
+			renderRecentFiles();
+			return;
+		}
+		const fuzzy = prepareFuzzySearch(query);
+		files = $app.vault
+			.getFiles()
+			.map((file) => {
+				const matchInFile = fuzzy(file.basename);
+				const matchInPath = fuzzy(file.path);
+				return {
+					matchInFile: matchInFile,
+					matchInPath: matchInPath,
+					file: file,
+				};
+			})
+			.filter((result) => {
+				return (
+					result.matchInPath !== null &&
+					result.matchInPath?.score > -1
+				);
+			})
+			.sort((a, b) => {
+				if (a.matchInFile === null && b.matchInFile === null) {
+					return 0;
+				}
+
+				if (a.matchInFile !== null && b.matchInFile !== null) {
+					if (a.matchInFile.score !== b.matchInFile.score) {
+						return b.matchInFile.score - a.matchInFile.score;
+					}
+
+					return a.file.name <= b.file.name ? -1 : 1;
+				}
+
+				return a.matchInFile === null ? 1 : -1;
+			})
+			.map((result) => result.file);
+	}
 </script>
 
 <div class="modal" bind:this={containerEl}>
 	<div class="prompt-container">
-		<input class="prompt-input" bind:this={inputEl} />
+		<!-- <input class="prompt-input" bind:this={inputEl} on:input={onInput} /> -->
+		<input class="prompt-input" bind:this={inputEl} bind:value={query} />
 		<div class="prompt-instruction" />
 	</div>
 
 	<div class="cards-container">
-		{#each files.slice(0, CARDS_PER_PAGE) as file, id}
+		{#each files.slice(page * CARDS_PER_PAGE, (page + 1) * CARDS_PER_PAGE) as file, id (file.path)}
 			<CardContainer
 				{id}
 				{file}

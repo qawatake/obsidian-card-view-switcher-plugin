@@ -21,7 +21,7 @@
 	});
 
 	onDestroy(() => {
-		renderer.unload();
+		setTimeout(() => renderer.unload(), 1000);
 	});
 
 	function onClicked() {
