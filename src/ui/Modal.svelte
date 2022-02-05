@@ -1,17 +1,11 @@
 <script lang="ts">
 	import type { SplitDirection, TFile } from 'obsidian';
 	import { onDestroy, onMount } from 'svelte';
-	import type { Unsubscriber } from 'svelte/store';
 	import CardContainer from 'ui/CardContainer.svelte';
-	import { app, selectedCardId } from 'ui/store';
+	import { app, switcherComponent } from 'ui/store';
 
 	// const
 	const CARDS_PER_PAGE = 10;
-
-	// subscribe
-	const unsubscribers: Unsubscriber[] = [];
-	let selected: number | undefined;
-	unsubscribers.push(selectedCardId.subscribe((id) => (selected = id)));
 
 	// props
 	export let files: TFile[];
@@ -20,15 +14,35 @@
 	let containerEl: HTMLElement;
 	let inputEl: HTMLInputElement;
 
+	// state variables
+	let selected: number | undefined = undefined;
+
 	onMount(() => {
 		inputEl.focus();
 	});
 
 	onDestroy(() => {
-		unsubscribers.forEach((unsubscriber) => unsubscriber());
+		// unsubscribers.forEach((unsubscriber) => unsubscriber());
 	});
 
-	async function onSelected(direction?: SplitDirection) {
+	export function navigateForward() {
+		selected = selected === undefined ? 0 : selected + 1;
+		if (selected >= files.length) {
+			selected = files.length - 1;
+		}
+	}
+
+	export function navigateBack() {
+		if (selected === undefined) {
+			return;
+		}
+		selected--;
+		if (selected < 0) {
+			selected = 0;
+		}
+	}
+
+	export async function open(direction?: SplitDirection) {
 		if (selected === undefined) {
 			return;
 		}
@@ -37,6 +51,7 @@
 			return;
 		}
 		await openFile(file, direction);
+		$switcherComponent.unload();
 		containerEl.remove();
 	}
 
@@ -63,8 +78,8 @@
 				{file}
 				selected={selected === id}
 				on:click={() => {
-					selectedCardId.set(id);
-					onSelected();
+					selected = id;
+					open();
 				}}
 			/>
 		{/each}
