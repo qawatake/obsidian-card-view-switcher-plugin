@@ -3,6 +3,7 @@
 		prepareFuzzySearch,
 		TFile,
 		type Instruction,
+		type Match,
 		type SplitDirection,
 	} from 'obsidian';
 	import { onDestroy, onMount } from 'svelte';
@@ -19,7 +20,7 @@
 	];
 
 	// props
-	export let files: TFile[];
+	// export let files: TFile[];
 
 	// bind
 	let containerEl: HTMLElement;
@@ -27,6 +28,11 @@
 	let query = '';
 
 	// state variables
+	interface FoundResult {
+		file: TFile;
+		matches: Match[];
+	}
+	let results: FoundResult[];
 	let selected = 0;
 	let page = 0;
 
@@ -45,8 +51,9 @@
 		// update selected
 		let updated = true;
 		selected++;
-		if (selected >= files.length) {
-			selected = files.length - 1;
+		// if (selected >= files.length) {
+		if (selected >= results.length) {
+			selected = results.length - 1;
 			updated = false;
 		}
 
@@ -78,7 +85,7 @@
 		if (selected === undefined) {
 			return;
 		}
-		const file = files[selected];
+		const file = results[selected]?.file;
 		if (file === undefined) {
 			return;
 		}
@@ -89,11 +96,15 @@
 
 	function renderRecentFiles() {
 		const paths = $app.workspace.getLastOpenFiles();
-		files = [];
+		// files = [];
+		results = [];
 		paths.forEach((path) => {
 			const file = $app.vault.getAbstractFileByPath(path);
 			if (file instanceof TFile) {
-				files.push(file);
+				results.push({
+					file: file,
+					matches: [],
+				});
 			}
 		});
 	}
@@ -116,7 +127,7 @@
 			return;
 		}
 		const fuzzy = prepareFuzzySearch(query);
-		files = $app.vault
+		results = $app.vault
 			.getFiles()
 			.map((file) => {
 				const matchInFile = fuzzy(file.basename);
@@ -145,7 +156,12 @@
 
 				return a.matchInFile === null ? 1 : -1;
 			})
-			.map((result) => result.file);
+			.map((result) => {
+				return {
+					file: result.file,
+					matches: result.matchInPath?.matches ?? [],
+				};
+			});
 	}
 </script>
 
@@ -166,10 +182,11 @@
 	</div>
 
 	<div class="cards-container">
-		{#each files.slice(page * CARDS_PER_PAGE, (page + 1) * CARDS_PER_PAGE) as file, id (file.path)}
+		{#each results.slice(page * CARDS_PER_PAGE, (page + 1) * CARDS_PER_PAGE) as result, id (result)}
 			<CardContainer
 				id={CARDS_PER_PAGE * page + id}
-				{file}
+				file={result.file}
+				matches={result.matches}
 				selected={selected === CARDS_PER_PAGE * page + id}
 				on:click={() => {
 					selected = CARDS_PER_PAGE * page * id;

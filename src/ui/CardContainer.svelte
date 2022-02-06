@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { app } from 'ui/store';
-	import { setIcon, type TFile } from 'obsidian';
+	import { setIcon, type Match, type TFile } from 'obsidian';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import { ViewGenerator } from 'interfaces/ViewGenerator';
 
@@ -40,15 +40,22 @@
 	// props
 	export let id: number;
 	export let file: TFile;
+	export let matches: Match[];
 	export let selected: boolean;
 
 	// internal variables
 	let contentContainerEl: HTMLElement;
+	let fileNameContainerEl: HTMLElement;
 	let iconContainerEl: HTMLElement;
 	let renderer: ViewGenerator;
 	const dispatch = createEventDispatcher();
 
 	onMount(async () => {
+		console.log(file, matches);
+
+		// path
+		renderFilePath(file.path, matches, fileNameContainerEl);
+
 		// render file content
 		const fileType = fileTypeMap[file.extension];
 		if (fileType !== undefined) {
@@ -81,6 +88,23 @@
 		}
 		setIcon(iconContainerEl, iconId);
 	}
+
+	function renderFilePath(
+		filePath: string,
+		matches: Match[],
+		containerEl: HTMLElement
+	) {
+		let cur = 0;
+		matches.forEach((match) => {
+			containerEl.appendText(filePath.slice(cur, match[0]));
+			containerEl.createSpan({
+				text: filePath.slice(match[0], match[1]),
+				cls: 'matched-in-path',
+			});
+			cur = match[1];
+		});
+		containerEl.appendText(filePath.slice(cur));
+	}
 </script>
 
 <div
@@ -92,7 +116,8 @@
 >
 	<div class="card-container-header">
 		<div class="file-icon-container" bind:this={iconContainerEl} />
-		<div class="file-name-container">{file.basename}</div>
+		<div class="file-name-container" bind:this={fileNameContainerEl} />
+		<!-- <div class="file-name-container">{file.basename}</div> -->
 	</div>
 
 	<div class="content-container-wrapper">
@@ -149,6 +174,11 @@
 		overflow-wrap: break-word;
 		min-width: 0;
 		flex: 1;
+	}
+
+	.file-name-container :global(span.matched-in-path) {
+		color: var(--text-normal);
+		font-weight: bold;
 	}
 
 	.content-container-wrapper {
