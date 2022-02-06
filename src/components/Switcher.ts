@@ -57,7 +57,10 @@ export class Switcher extends Component {
 			this.modal?.navigateForward();
 		});
 		this.scope?.register([], 'Enter', () => {
-			this.modal?.open();
+			this.modal?.open(false);
+		});
+		this.scope?.register(['Ctrl'], 'Enter', () => {
+			this.modal?.open(true);
 		});
 		this.scope?.register([], 'Escape', () => {
 			this.unload();
