@@ -128,10 +128,7 @@
 				};
 			})
 			.filter((result) => {
-				return (
-					result.matchInPath !== null &&
-					result.matchInPath?.score > -1
-				);
+				return result.matchInPath !== null;
 			})
 			.sort((a, b) => {
 				if (a.matchInFile === null && b.matchInFile === null) {
