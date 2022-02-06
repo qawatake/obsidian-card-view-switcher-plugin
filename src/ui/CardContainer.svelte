@@ -49,9 +49,18 @@
 	const dispatch = createEventDispatcher();
 
 	onMount(async () => {
-		renderer = await new ViewGenerator($app, contentContainerEl, file).load(
-			'preview'
-		);
+		// render file content
+		const fileType = fileTypeMap[file.extension];
+		if (fileType !== undefined) {
+			// supported file format
+			contentContainerEl.empty();
+			renderer = await new ViewGenerator(
+				$app,
+				contentContainerEl,
+				file
+			).load('preview');
+		}
+
 		setFileIcon(file);
 	});
 
@@ -87,7 +96,11 @@
 	</div>
 
 	<div class="content-container-wrapper">
-		<div class="content-container" bind:this={contentContainerEl} />
+		<div class="content-container" bind:this={contentContainerEl}>
+			<div class="content-not-supported-file-format">
+				{`${file.extension.toUpperCase()} file`}
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -127,7 +140,7 @@
 	}
 
 	.file-icon-container {
-		padding-right: 10px;
+		padding-right: 7px;
 	}
 
 	.file-name-container {
@@ -151,6 +164,11 @@
 
 		font-size: 0.8rem;
 		line-height: 1.2;
+	}
+
+	.content-container div.content-not-supported-file-format {
+		font-size: 1rem;
+		color: var(--text-muted);
 	}
 
 	.content-container :global(div),

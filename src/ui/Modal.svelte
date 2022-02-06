@@ -98,6 +98,7 @@
 
 	function onInputChange(query: string) {
 		selected = 0;
+		page = 0;
 
 		if (query === '') {
 			renderRecentFiles();
