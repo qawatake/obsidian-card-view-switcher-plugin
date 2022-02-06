@@ -1,8 +1,41 @@
 <script lang="ts">
 	import { app } from 'ui/store';
-	import type { TFile } from 'obsidian';
+	import { setIcon, type TFile } from 'obsidian';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import { ViewGenerator } from 'interfaces/ViewGenerator';
+
+	// consts
+	// extension: file type
+	const FILE_TYPES = ['md', 'image', 'audio', 'movie', 'pdf'] as const;
+	type FileType = typeof FILE_TYPES[number];
+	const fileTypeMap: { [extension: string]: FileType } = {
+		md: 'md',
+		png: 'image',
+		jpg: 'image',
+		jpeg: 'image',
+		gif: 'image',
+		bmp: 'image',
+		svg: 'image',
+		mp3: 'audio',
+		webm: 'audio',
+		wav: 'audio',
+		m4a: 'audio',
+		ogg: 'audio',
+		'3gp': 'audio',
+		flac: 'audio',
+		mp4: 'movie',
+		ogv: 'movie',
+		pdf: 'pdf',
+	};
+	// FileType: icon
+	const fileIconMap = new Map<FileType | undefined, string>([
+		['md', 'document'],
+		['image', 'image-file'],
+		['audio', 'audio-file'],
+		['movie', 'play-audio-glyph'],
+		['pdf', 'pdf-file'],
+		[undefined, 'question-mark-glyph'],
+	]);
 
 	// props
 	export let id: number;
@@ -11,6 +44,7 @@
 
 	// internal variables
 	let contentContainerEl: HTMLElement;
+	let iconContainerEl: HTMLElement;
 	let renderer: ViewGenerator;
 	const dispatch = createEventDispatcher();
 
@@ -18,6 +52,7 @@
 		renderer = await new ViewGenerator($app, contentContainerEl, file).load(
 			'preview'
 		);
+		setFileIcon(file);
 	});
 
 	onDestroy(() => {
@@ -26,6 +61,16 @@
 
 	function onClicked() {
 		dispatch('click');
+	}
+
+	function setFileIcon(file: TFile) {
+		iconContainerEl.empty();
+
+		const iconId = fileIconMap.get(fileTypeMap[file.extension]);
+		if (iconId === undefined) {
+			return;
+		}
+		setIcon(iconContainerEl, iconId);
 	}
 </script>
 
@@ -36,7 +81,10 @@
 	data-path={file.path}
 	on:click={onClicked}
 >
-	<div class="file-name-container">{file.basename}</div>
+	<div class="card-container-header">
+		<div class="file-icon-container" bind:this={iconContainerEl} />
+		<div class="file-name-container">{file.basename}</div>
+	</div>
 
 	<div class="content-container-wrapper">
 		<div class="content-container" bind:this={contentContainerEl} />
@@ -71,14 +119,23 @@
 		margin: -5px;
 	}
 
-	.file-name-container {
+	.card-container-header {
 		padding: 5px 10px;
+		background-color: var(--background-secondary);
+		display: flex;
+		color: var(--text-muted);
+	}
+
+	.file-icon-container {
+		padding-right: 10px;
+	}
+
+	.file-name-container {
 		font-size: 1rem;
 		line-height: 1.2rem;
-		background-color: var(--background-secondary);
-		color: var(--text-muted);
 		overflow-wrap: break-word;
-		flex-grow: 0;
+		min-width: 0;
+		flex: 1;
 	}
 
 	.content-container-wrapper {
