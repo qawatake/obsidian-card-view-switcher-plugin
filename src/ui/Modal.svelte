@@ -1,11 +1,22 @@
 <script lang="ts">
-	import { prepareFuzzySearch, TFile, type SplitDirection } from 'obsidian';
+	import {
+		prepareFuzzySearch,
+		TFile,
+		type Instruction,
+		type SplitDirection,
+	} from 'obsidian';
 	import { onDestroy, onMount } from 'svelte';
 	import CardContainer from 'ui/CardContainer.svelte';
 	import { app, switcherComponent } from 'ui/store';
 
 	// const
 	const CARDS_PER_PAGE = 10;
+	const instructions: Instruction[] = [
+		{ command: '↑↓', purpose: 'to navigate' },
+		{ command: 'ctrl + n/p', purpose: 'to navigate' },
+		{ command: '↵', purpose: 'to open' },
+		{ command: 'esc', purpose: 'to dismiss' },
+	];
 
 	// props
 	export let files: TFile[];
@@ -145,7 +156,16 @@
 	<div class="prompt-container">
 		<!-- <input class="prompt-input" bind:this={inputEl} on:input={onInput} /> -->
 		<input class="prompt-input" bind:this={inputEl} bind:value={query} />
-		<div class="prompt-instruction" />
+		<div class="prompt-instruction-container">
+			{#each instructions as instruction}
+				<div class="prompt-instruction">
+					<span class="prompt-instruction-command"
+						>{instruction.command}</span
+					>
+					<span>{instruction.purpose}</span>
+				</div>
+			{/each}
+		</div>
 	</div>
 
 	<div class="cards-container">
@@ -187,6 +207,11 @@
 
 	.prompt-container {
 		margin-bottom: 20px;
+		background-color: var(--background-primary);
+		padding: 10px;
+		border-radius: 8px;
+		display: flex;
+		flex-direction: column;
 	}
 
 	.prompt-input {
@@ -206,9 +231,16 @@
 		border-color: var(--interactive-accent);
 	}
 
-	.prompt-instruction {
+	.prompt-instruction-container {
 		display: unset;
 		margin-right: 0;
+		padding: 10px 10px 2px 10px;
+	}
+
+	.prompt-instruction-command {
+		font-size: 12px;
+		font-weight: 900;
+		margin-right: 4px;
 	}
 
 	.cards-container {
