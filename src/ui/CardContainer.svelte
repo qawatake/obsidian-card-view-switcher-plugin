@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { app } from 'ui/store';
-	import { setIcon, type Match, type TFile } from 'obsidian';
+	import type { Match, TFile } from 'obsidian';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import { ViewGenerator } from 'interfaces/ViewGenerator';
 
@@ -27,15 +27,15 @@
 		ogv: 'movie',
 		pdf: 'pdf',
 	};
-	// FileType: icon
-	const fileIconMap = new Map<FileType | undefined, string>([
-		['md', 'document'],
-		['image', 'image-file'],
-		['audio', 'audio-file'],
-		['movie', 'play-audio-glyph'],
-		['pdf', 'pdf-file'],
-		[undefined, 'question-mark-glyph'],
-	]);
+	// // FileType: icon
+	// const fileIconMap = new Map<FileType | undefined, string>([
+	// 	['md', 'document'],
+	// 	['image', 'image-file'],
+	// 	['audio', 'audio-file'],
+	// 	['movie', 'play-audio-glyph'],
+	// 	['pdf', 'pdf-file'],
+	// 	[undefined, 'question-mark-glyph'],
+	// ]);
 
 	// props
 	export let id: number;
@@ -46,7 +46,7 @@
 	// bind
 	let contentContainerEl: HTMLElement | undefined | null;
 	let fileNameContainerEl: HTMLElement | undefined | null;
-	let iconContainerEl: HTMLElement | undefined | null;
+	// let iconContainerEl: HTMLElement | undefined | null;
 
 	// internal variables
 	let renderer: ViewGenerator | undefined;
@@ -74,7 +74,7 @@
 			).load('preview');
 		}
 
-		setFileIcon(file);
+		// setFileIcon(file);
 	});
 
 	onDestroy(() => {
@@ -85,18 +85,18 @@
 		dispatch('click');
 	}
 
-	function setFileIcon(file: TFile) {
-		if (!iconContainerEl) {
-			return;
-		}
-		iconContainerEl.empty();
+	// function setFileIcon(file: TFile) {
+	// 	if (!iconContainerEl) {
+	// 		return;
+	// 	}
+	// 	iconContainerEl.empty();
 
-		const iconId = fileIconMap.get(fileTypeMap[file.extension]);
-		if (iconId === undefined) {
-			return;
-		}
-		setIcon(iconContainerEl, iconId);
-	}
+	// 	const iconId = fileIconMap.get(fileTypeMap[file.extension]);
+	// 	if (iconId === undefined) {
+	// 		return;
+	// 	}
+	// 	setIcon(iconContainerEl, iconId);
+	// }
 
 	function renderFilePath(
 		filePath: string,
@@ -124,7 +124,7 @@
 	on:click={onClicked}
 >
 	<div class="card-container-header">
-		<div class="file-icon-container" bind:this={iconContainerEl} />
+		<!-- <div class="file-icon-container" bind:this={iconContainerEl} /> -->
 		<div class="file-name-container" bind:this={fileNameContainerEl} />
 		<!-- <div class="file-name-container">{file.basename}</div> -->
 	</div>
@@ -173,9 +173,9 @@
 		color: var(--text-muted);
 	}
 
-	.file-icon-container {
+	/* .file-icon-container {
 		padding-right: 7px;
-	}
+	} */
 
 	.file-name-container {
 		font-size: 1rem;
