@@ -16,7 +16,7 @@
 	let query = '';
 
 	// state variables
-	let selected: number | undefined = undefined;
+	let selected = 0;
 	let page = 0;
 
 	// onload
@@ -31,19 +31,35 @@
 	});
 
 	export function navigateForward() {
-		selected = selected === undefined ? 0 : selected + 1;
+		// update selected
+		let updated = true;
+		selected++;
 		if (selected >= files.length) {
 			selected = files.length - 1;
+			updated = false;
+		}
+
+		// update page
+		if (updated) {
+			const shouldTransitNextPage = selected % CARDS_PER_PAGE === 0;
+			if (shouldTransitNextPage) page++;
 		}
 	}
 
 	export function navigateBack() {
-		if (selected === undefined) {
-			return;
-		}
+		// update selected
+		let updated = true;
 		selected--;
 		if (selected < 0) {
 			selected = 0;
+			updated = false;
+		}
+
+		// update page
+		if (updated) {
+			const shouldTransitPreviousPage =
+				(selected + 1) % CARDS_PER_PAGE === 0;
+			if (shouldTransitPreviousPage) page--;
 		}
 	}
 
@@ -134,11 +150,11 @@
 	<div class="cards-container">
 		{#each files.slice(page * CARDS_PER_PAGE, (page + 1) * CARDS_PER_PAGE) as file, id (file.path)}
 			<CardContainer
-				{id}
+				id={CARDS_PER_PAGE * page + id}
 				{file}
-				selected={selected === id}
+				selected={selected === CARDS_PER_PAGE * page + id}
 				on:click={() => {
-					selected = id;
+					selected = CARDS_PER_PAGE * page * id;
 					open();
 				}}
 			/>
