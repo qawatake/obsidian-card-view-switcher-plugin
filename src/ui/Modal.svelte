@@ -23,8 +23,8 @@
 	// export let files: TFile[];
 
 	// bind
-	let containerEl: HTMLElement;
-	let inputEl: HTMLInputElement;
+	let containerEl: HTMLElement | undefined | null;
+	let inputEl: HTMLInputElement | undefined | null;
 	let query = '';
 
 	// state variables
@@ -40,7 +40,7 @@
 	$: onInputChange(query);
 
 	onMount(() => {
-		inputEl.focus();
+		inputEl?.focus();
 	});
 
 	onDestroy(() => {
@@ -91,7 +91,7 @@
 		}
 		await openFile(file, direction);
 		$switcherComponent.unload();
-		containerEl.remove();
+		containerEl?.remove();
 	}
 
 	function renderRecentFiles() {

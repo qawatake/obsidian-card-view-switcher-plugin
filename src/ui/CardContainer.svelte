@@ -43,20 +43,26 @@
 	export let matches: Match[];
 	export let selected: boolean;
 
+	// bind
+	let contentContainerEl: HTMLElement | undefined | null;
+	let fileNameContainerEl: HTMLElement | undefined | null;
+	let iconContainerEl: HTMLElement | undefined | null;
+
 	// internal variables
-	let contentContainerEl: HTMLElement;
-	let fileNameContainerEl: HTMLElement;
-	let iconContainerEl: HTMLElement;
-	let renderer: ViewGenerator;
+	let renderer: ViewGenerator | undefined;
 	const dispatch = createEventDispatcher();
 
 	onMount(async () => {
-		console.log(file, matches);
-
 		// path
+		if (!fileNameContainerEl) {
+			return;
+		}
 		renderFilePath(file.path, matches, fileNameContainerEl);
 
 		// render file content
+		if (!contentContainerEl) {
+			return;
+		}
 		const fileType = fileTypeMap[file.extension];
 		if (fileType !== undefined) {
 			// supported file format
@@ -72,7 +78,7 @@
 	});
 
 	onDestroy(() => {
-		setTimeout(() => renderer.unload(), 1000);
+		setTimeout(() => renderer?.unload(), 1000);
 	});
 
 	function onClicked() {
@@ -80,6 +86,9 @@
 	}
 
 	function setFileIcon(file: TFile) {
+		if (!iconContainerEl) {
+			return;
+		}
 		iconContainerEl.empty();
 
 		const iconId = fileIconMap.get(fileTypeMap[file.extension]);
