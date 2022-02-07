@@ -16,7 +16,7 @@ export class Switcher extends Component {
 	override onload(): void {
 		this.setHotkeys();
 
-		this.opemModal();
+		this.openModal();
 	}
 
 	override onunload(): void {
@@ -24,7 +24,7 @@ export class Switcher extends Component {
 		this.modal?.$destroy();
 	}
 
-	private opemModal() {
+	private openModal() {
 		const paths = this.app.workspace.getLastOpenFiles();
 		const files: TFile[] = [];
 		paths.forEach((path) => {
@@ -59,10 +59,13 @@ export class Switcher extends Component {
 			this.modal?.navigateForward();
 		});
 		this.scope?.register([], 'Enter', () => {
-			this.modal?.open(false);
+			this.modal?.open();
 		});
 		this.scope?.register(['Ctrl'], 'Enter', () => {
-			this.modal?.open(true);
+			this.modal?.open('horizontal');
+		});
+		this.scope.register(['Ctrl', 'Shift'], 'Enter', () => {
+			this.modal?.open('vertical');
 		});
 		this.scope?.register([], 'Escape', () => {
 			this.unload();

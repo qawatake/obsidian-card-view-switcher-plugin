@@ -16,7 +16,8 @@
 		{ command: '↑↓', purpose: 'to navigate' },
 		{ command: 'ctrl + n/p', purpose: 'to navigate' },
 		{ command: '↵', purpose: 'to open' },
-		{ command: 'ctrl + ↵', purpose: 'to open in a new pane' },
+		{ command: 'ctrl + ↵', purpose: 'to open horizontally' },
+		{ command: 'ctrl + ↵', purpose: 'to open vertically' },
 		{ command: 'esc', purpose: 'to dismiss' },
 	];
 
@@ -82,7 +83,7 @@
 		}
 	}
 
-	export async function open(split: boolean, direction?: SplitDirection) {
+	export async function open(direction?: SplitDirection) {
 		if (selected === undefined) {
 			return;
 		}
@@ -90,7 +91,7 @@
 		if (file === undefined) {
 			return;
 		}
-		await openFile(file, split, direction);
+		await openFile(file, direction);
 		$switcherComponent.unload();
 		containerEl?.remove();
 	}
@@ -110,14 +111,11 @@
 		});
 	}
 
-	async function openFile(
-		file: TFile,
-		split: boolean,
-		direction?: SplitDirection
-	) {
-		const leaf = split
-			? $app.workspace.splitActiveLeaf(direction)
-			: $app.workspace.getMostRecentLeaf();
+	async function openFile(file: TFile, direction?: SplitDirection) {
+		const leaf =
+			direction !== undefined
+				? $app.workspace.splitActiveLeaf(direction)
+				: $app.workspace.getMostRecentLeaf();
 		await leaf.openFile(file);
 		$app.workspace.setActiveLeaf(leaf, true, true);
 	}
@@ -201,7 +199,7 @@
 				selected={selected === CARDS_PER_PAGE * page + id}
 				on:click={() => {
 					selected = CARDS_PER_PAGE * page * id;
-					open(false);
+					open();
 				}}
 			/>
 		{/each}
