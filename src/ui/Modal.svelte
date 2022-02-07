@@ -171,7 +171,6 @@
 
 <div class="modal" bind:this={containerEl}>
 	<div class="prompt-container">
-		<!-- <input class="prompt-input" bind:this={inputEl} on:input={onInput} /> -->
 		<input class="prompt-input" bind:this={inputEl} bind:value={query} />
 		<div class="prompt-instruction-container">
 			{#each instructions as instruction}
@@ -204,7 +203,7 @@
 <style>
 	.modal {
 		display: flex;
-		/* align-items: center; */
+		align-items: center;
 		/* justify-content: center; */
 		flex-direction: column;
 		position: absolute;
@@ -230,10 +229,12 @@
 		border-radius: 8px;
 		display: flex;
 		flex-direction: column;
+		align-items: center;
+		width: fit-content;
 	}
 
 	.prompt-input {
-		width: 100%;
+		max-width: 700px;
 		padding: 9px 20px 8px 20px;
 		font-size: 16px;
 		border-radius: 6px;
@@ -253,6 +254,10 @@
 		display: unset;
 		margin-right: 0;
 		padding: 10px 10px 2px 10px;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: center;
 	}
 
 	.prompt-instruction-command {
