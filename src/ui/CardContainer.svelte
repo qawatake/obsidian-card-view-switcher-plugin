@@ -210,10 +210,21 @@
 		color: var(--text-muted);
 	}
 
-	.content-container :global(div),
-	:global(p),
-	:global(li),
-	:global(code) {
+	.content-container :global(p) {
+		font-size: 0.8rem;
+		line-height: 1.2;
+	}
+
+	.content-container :global(code) {
+		font-size: 0.8rem;
+		line-height: 1.2;
+	}
+
+	.content-container :global(div) {
+		font-size: 0.8rem;
+	}
+
+	.content-container :global(li) {
 		font-size: 0.8rem;
 		line-height: 1.2;
 	}
