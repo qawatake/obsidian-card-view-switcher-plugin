@@ -238,6 +238,7 @@
 		max-width: unset;
 		border-radius: unset;
 		border: unset;
+		background-color: unset;
 	}
 
 	.modal-background {
