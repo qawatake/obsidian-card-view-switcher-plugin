@@ -17,7 +17,7 @@
 		{ command: 'ctrl + n/p', purpose: 'to navigate' },
 		{ command: '↵', purpose: 'to open' },
 		{ command: 'ctrl + ↵', purpose: 'to open horizontally' },
-		{ command: 'ctrl + ↵', purpose: 'to open vertically' },
+		{ command: 'ctrl + shift + ↵', purpose: 'to open vertically' },
 		{ command: 'esc', purpose: 'to dismiss' },
 	];
 
