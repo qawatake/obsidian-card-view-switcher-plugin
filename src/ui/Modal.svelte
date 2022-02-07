@@ -212,7 +212,7 @@
 				matches={result.matches}
 				selected={selected === CARDS_PER_PAGE * page + id}
 				on:click={() => {
-					selected = CARDS_PER_PAGE * page * id;
+					selected = CARDS_PER_PAGE * page + id;
 					open();
 				}}
 			/>
