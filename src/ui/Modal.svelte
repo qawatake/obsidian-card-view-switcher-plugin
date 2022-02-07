@@ -1,16 +1,17 @@
 <script lang="ts">
 	import {
-		prepareFuzzySearch,
-		prepareSimpleSearch,
 		TFile,
 		type Instruction,
 		type Match,
-		type SearchResult,
 		type SplitDirection,
 	} from 'obsidian';
 	import { onDestroy, onMount } from 'svelte';
 	import CardContainer from 'ui/CardContainer.svelte';
 	import { app, switcherComponent } from 'ui/store';
+	import {
+		fuzzySearchInFilePaths,
+		sortResultItemsInFilePathSearch,
+	} from 'utils/Search';
 
 	// const
 	const CARDS_PER_PAGE = 10;
@@ -134,111 +135,6 @@
 		const items = fuzzySearchInFilePaths(query, files);
 		results = sortResultItemsInFilePathSearch(items).map((item) => {
 			return { file: item.file, matches: item.path?.matches ?? [] };
-		});
-		// const fuzzy = prepareFuzzySearch(query);
-		// results = $app.vault
-		// 	.getFiles()
-		// 	.map((file) => {
-		// 		const matchInFile = fuzzy(file.basename);
-		// 		const matchInPath = fuzzy(file.path);
-		// 		return {
-		// 			matchInFile: matchInFile,
-		// 			matchInPath: matchInPath,
-		// 			file: file,
-		// 		};
-		// 	})
-		// 	.filter((result) => {
-		// 		return result.matchInPath !== null;
-		// 	})
-		// 	.sort((a, b) => {
-		// 		if (a.matchInFile === null && b.matchInFile === null) {
-		// 			return 0;
-		// 		}
-
-		// 		if (a.matchInFile !== null && b.matchInFile !== null) {
-		// 			if (a.matchInFile.score !== b.matchInFile.score) {
-		// 				return b.matchInFile.score - a.matchInFile.score;
-		// 			}
-
-		// 			return a.file.name <= b.file.name ? -1 : 1;
-		// 		}
-
-		// 		return a.matchInFile === null ? 1 : -1;
-		// 	})
-		// 	.map((result) => {
-		// 		return {
-		// 			file: result.file,
-		// 			matches: result.matchInPath?.matches ?? [],
-		// 		};
-		// 	});
-	}
-
-	interface FilePathSearchResultItem {
-		file: TFile;
-		name: SearchResult | null;
-		path: SearchResult | null;
-	}
-
-	function fuzzySearchInFilePaths(
-		query: string,
-		files: TFile[]
-	): FilePathSearchResultItem[] {
-		const fuzzy = prepareFuzzySearch(query);
-		return files
-			.map((file) => {
-				const matchInFile = fuzzy(file.basename);
-				const matchInPath = fuzzy(file.path);
-				return {
-					file: file,
-					name: matchInFile,
-					path: matchInPath,
-				};
-			})
-			.filter((item) => {
-				return item.path !== null;
-			});
-	}
-
-	function sortResultItemsInFilePathSearch(
-		items: FilePathSearchResultItem[]
-	): FilePathSearchResultItem[] {
-		return items.sort((a, b) => {
-			if (a.name === null && b.name === null) {
-				return 0;
-			}
-
-			if (a.path !== null && b.path !== null) {
-				if (a.name === null || b.name === null) return 0;
-				if (a.name.score !== b.name.score) {
-					return b.name?.score - a.name?.score;
-				}
-
-				return a.file.name <= b.file.name ? -1 : 1;
-			}
-
-			return a.name === null ? 1 : -1;
-		});
-	}
-
-	interface FileSearchResultItem {
-		file: TFile;
-		name: SearchResult | null;
-		content: SearchResult | null;
-	}
-
-	function searchInFiles(
-		query: string,
-		files: TFile[]
-	): FileSearchResultItem[] {
-		const search = prepareSimpleSearch(query);
-		const items: FileSearchResultItem[] = [];
-		files.forEach(async (file) => {
-			const inName = search(file.name);
-			const inContent = search(await $app.vault.cachedRead(file));
-			items.push({ file: file, name: inName, content: inContent });
-		});
-		return items.filter((item) => {
-			return item.name !== null && item.content !== null;
 		});
 	}
 </script>
