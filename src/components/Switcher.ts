@@ -44,10 +44,12 @@ export class Switcher extends Component {
 	private setHotkeys() {
 		this.app.keymap.pushScope(this.scope);
 
-		this.scope?.register(['Ctrl'], 'p', () => {
+		this.scope?.register(['Ctrl'], 'p', (evt) => {
+			evt.preventDefault(); // to prevent cursor from moving to the start position
 			this.modal?.navigateBack();
 		});
-		this.scope?.register(['Ctrl'], 'n', () => {
+		this.scope?.register(['Ctrl'], 'n', (evt) => {
+			evt.preventDefault(); // to prevent cursor from moving to the end position
 			this.modal?.navigateForward();
 		});
 		this.scope?.register([], 'ArrowUp', () => {
