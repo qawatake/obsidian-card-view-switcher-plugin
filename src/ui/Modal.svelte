@@ -1,6 +1,5 @@
 <script lang="ts">
 	import {
-		prepareFuzzySearch,
 		TFile,
 		type Instruction,
 		type Match,
@@ -9,6 +8,11 @@
 	import { onDestroy, onMount } from 'svelte';
 	import CardContainer from 'ui/CardContainer.svelte';
 	import { app, switcherComponent } from 'ui/store';
+	import {
+		fuzzySearchInFilePaths,
+		searchInFiles,
+		sortResultItemsInFilePathSearch,
+	} from 'utils/Search';
 
 	// const
 	const CARDS_PER_PAGE = 10;
@@ -21,28 +25,24 @@
 		{ command: 'esc', purpose: 'to dismiss' },
 	];
 
-	// props
-	// export let files: TFile[];
-
 	// bind
 	let containerEl: HTMLElement | undefined | null;
 	let inputEl: HTMLInputElement | undefined | null;
-	let query = '';
 
 	// state variables
 	interface FoundResult {
 		file: TFile;
 		matches: Match[];
 	}
-	let results: FoundResult[];
+	let results: FoundResult[] = [];
 	let selected = 0;
 	let page = 0;
-
-	// onload
-	$: onInputChange(query);
+	// type SearchMode = 'normal' | 'recent';
+	// let mode: SearchMode = 'recent';
 
 	onMount(() => {
 		inputEl?.focus();
+		renderRecentFiles();
 	});
 
 	onDestroy(() => {
@@ -120,7 +120,19 @@
 		$app.workspace.setActiveLeaf(leaf, true, true);
 	}
 
-	function onInputChange(query: string) {
+	function onInput(evt: Event) {
+		if (!(evt instanceof InputEvent)) {
+			return;
+		}
+		const inputEl = evt.target;
+		if (!(inputEl instanceof HTMLInputElement)) return;
+		const changed = shouldChangeMode(inputEl, evt);
+		if (changed) return;
+
+		renderResults(inputEl.value);
+	}
+
+	async function renderResults(query: string) {
 		selected = 0;
 		page = 0;
 
@@ -128,42 +140,39 @@
 			renderRecentFiles();
 			return;
 		}
-		const fuzzy = prepareFuzzySearch(query);
-		results = $app.vault
-			.getFiles()
-			.map((file) => {
-				const matchInFile = fuzzy(file.basename);
-				const matchInPath = fuzzy(file.path);
-				return {
-					matchInFile: matchInFile,
-					matchInPath: matchInPath,
-					file: file,
-				};
-			})
-			.filter((result) => {
-				return result.matchInPath !== null;
-			})
-			.sort((a, b) => {
-				if (a.matchInFile === null && b.matchInFile === null) {
-					return 0;
-				}
 
-				if (a.matchInFile !== null && b.matchInFile !== null) {
-					if (a.matchInFile.score !== b.matchInFile.score) {
-						return b.matchInFile.score - a.matchInFile.score;
-					}
-
-					return a.file.name <= b.file.name ? -1 : 1;
-				}
-
-				return a.matchInFile === null ? 1 : -1;
-			})
-			.map((result) => {
-				return {
-					file: result.file,
-					matches: result.matchInPath?.matches ?? [],
-				};
+		results = [];
+		if (!query.startsWith("'")) {
+			const files = $app.workspace
+				.getLastOpenFiles()
+				.map((path) => $app.vault.getAbstractFileByPath(path))
+				.filter((file) => file instanceof TFile) as TFile[];
+			const items = await searchInFiles($app, query, files);
+			results = items.map((item) => {
+				return { file: item.file, matches: item.path?.matches ?? [] };
 			});
+		} else {
+			const trimmedQuery = query.replace(/^'/, '');
+			const files = $app.vault.getFiles();
+			const items = sortResultItemsInFilePathSearch(
+				fuzzySearchInFilePaths(trimmedQuery, files)
+			);
+			results = items.map((item) => {
+				return { file: item.file, matches: item.path?.matches ?? [] };
+			});
+		}
+	}
+
+	function shouldChangeMode(
+		inputEl: HTMLInputElement,
+		evt: InputEvent
+	): boolean {
+		if (evt.data === ' ' && inputEl.value === evt.data) {
+			evt.preventDefault();
+			inputEl.value = "'";
+			return true;
+		}
+		return false;
 	}
 </script>
 
@@ -177,7 +186,12 @@
 	/>
 
 	<div class="prompt-container">
-		<input class="prompt-input" bind:this={inputEl} bind:value={query} />
+		<input
+			class="prompt-input"
+			placeholder="Hit space key to toggle the normal search mode"
+			bind:this={inputEl}
+			on:input={onInput}
+		/>
 		<div class="prompt-instruction-container">
 			{#each instructions as instruction}
 				<div class="prompt-instruction">
@@ -224,6 +238,7 @@
 		max-width: unset;
 		border-radius: unset;
 		border: unset;
+		background-color: unset;
 	}
 
 	.modal-background {
