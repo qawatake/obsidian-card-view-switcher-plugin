@@ -75,7 +75,6 @@ export async function searchInFiles(
 			file.extension === 'md'
 				? search(await app.vault.cachedRead(file))
 				: null;
-		console.log(file.extension);
 		items.push({
 			file: file,
 			name: inName,

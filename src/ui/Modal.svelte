@@ -25,28 +25,24 @@
 		{ command: 'esc', purpose: 'to dismiss' },
 	];
 
-	// props
-	// export let files: TFile[];
-
 	// bind
 	let containerEl: HTMLElement | undefined | null;
 	let inputEl: HTMLInputElement | undefined | null;
-	let query = '';
 
 	// state variables
 	interface FoundResult {
 		file: TFile;
 		matches: Match[];
 	}
-	let results: FoundResult[];
+	let results: FoundResult[] = [];
 	let selected = 0;
 	let page = 0;
-
-	// onload
-	$: onInputChange(query);
+	// type SearchMode = 'normal' | 'recent';
+	// let mode: SearchMode = 'recent';
 
 	onMount(() => {
 		inputEl?.focus();
+		renderRecentFiles();
 	});
 
 	onDestroy(() => {
@@ -124,7 +120,19 @@
 		$app.workspace.setActiveLeaf(leaf, true, true);
 	}
 
-	async function onInputChange(query: string) {
+	function onInput(evt: Event) {
+		if (!(evt instanceof InputEvent)) {
+			return;
+		}
+		const inputEl = evt.target;
+		if (!(inputEl instanceof HTMLInputElement)) return;
+		const changed = shouldChangeMode(inputEl, evt);
+		if (changed) return;
+
+		renderResults(inputEl.value);
+	}
+
+	async function renderResults(query: string) {
 		selected = 0;
 		page = 0;
 
@@ -132,23 +140,39 @@
 			renderRecentFiles();
 			return;
 		}
-		results = [];
-		const files = $app.workspace
-			.getLastOpenFiles()
-			.map((path) => $app.vault.getAbstractFileByPath(path))
-			.filter((file) => file instanceof TFile) as TFile[];
-		const items = await searchInFiles($app, query, files);
-		results = items.map((item) => {
-			return { file: item.file, matches: item.path?.matches ?? [] };
-		});
 
-		// const files = $app.vault.getFiles();
-		// const items = sortResultItemsInFilePathSearch(
-		// 	fuzzySearchInFilePaths(query, files)
-		// );
-		// results = items.map((item) => {
-		// 	return { file: item.file, matches: item.path?.matches ?? [] };
-		// });
+		results = [];
+		if (!query.startsWith("'")) {
+			const files = $app.workspace
+				.getLastOpenFiles()
+				.map((path) => $app.vault.getAbstractFileByPath(path))
+				.filter((file) => file instanceof TFile) as TFile[];
+			const items = await searchInFiles($app, query, files);
+			results = items.map((item) => {
+				return { file: item.file, matches: item.path?.matches ?? [] };
+			});
+		} else {
+			const trimmedQuery = query.replace(/^'/, '');
+			const files = $app.vault.getFiles();
+			const items = sortResultItemsInFilePathSearch(
+				fuzzySearchInFilePaths(trimmedQuery, files)
+			);
+			results = items.map((item) => {
+				return { file: item.file, matches: item.path?.matches ?? [] };
+			});
+		}
+	}
+
+	function shouldChangeMode(
+		inputEl: HTMLInputElement,
+		evt: InputEvent
+	): boolean {
+		if (evt.data === ' ' && inputEl.value === evt.data) {
+			evt.preventDefault();
+			inputEl.value = "'";
+			return true;
+		}
+		return false;
 	}
 </script>
 
@@ -162,7 +186,12 @@
 	/>
 
 	<div class="prompt-container">
-		<input class="prompt-input" bind:this={inputEl} bind:value={query} />
+		<input
+			class="prompt-input"
+			placeholder="Hit space key to toggle the normal search mode"
+			bind:this={inputEl}
+			on:input={onInput}
+		/>
 		<div class="prompt-instruction-container">
 			{#each instructions as instruction}
 				<div class="prompt-instruction">
