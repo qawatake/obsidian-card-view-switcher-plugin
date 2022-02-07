@@ -170,6 +170,8 @@
 </script>
 
 <div class="modal" bind:this={containerEl}>
+	<div class="modal-background" />
+
 	<div class="prompt-container">
 		<input class="prompt-input" bind:this={inputEl} bind:value={query} />
 		<div class="prompt-instruction-container">
@@ -204,7 +206,6 @@
 	.modal {
 		display: flex;
 		align-items: center;
-		/* justify-content: center; */
 		flex-direction: column;
 		position: absolute;
 		top: 0;
@@ -214,12 +215,20 @@
 		z-index: var(--layer-modal);
 
 		padding: 30px 50px;
-		background-color: var(--background-modifier-cover);
 
 		/* reset the default obsidian style */
 		max-width: unset;
 		border-radius: unset;
 		border: unset;
+	}
+
+	.modal-background {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: var(--background-modifier-cover);
 	}
 
 	.prompt-container {
@@ -231,6 +240,7 @@
 		flex-direction: column;
 		align-items: center;
 		width: fit-content;
+		z-index: 1; /* to put this in front of background */
 	}
 
 	.prompt-input {
@@ -275,5 +285,6 @@
 		height: 100%;
 		width: 100%;
 		min-height: 0;
+		z-index: 1; /* to put this in front of background */
 	}
 </style>
