@@ -10,6 +10,7 @@
 	import { app, switcherComponent } from 'ui/store';
 	import {
 		fuzzySearchInFilePaths,
+		searchInFiles,
 		sortResultItemsInFilePathSearch,
 	} from 'utils/Search';
 
@@ -123,7 +124,7 @@
 		$app.workspace.setActiveLeaf(leaf, true, true);
 	}
 
-	function onInputChange(query: string) {
+	async function onInputChange(query: string) {
 		selected = 0;
 		page = 0;
 
@@ -131,11 +132,23 @@
 			renderRecentFiles();
 			return;
 		}
-		const files = $app.vault.getFiles();
-		const items = fuzzySearchInFilePaths(query, files);
-		results = sortResultItemsInFilePathSearch(items).map((item) => {
+		results = [];
+		const files = $app.workspace
+			.getLastOpenFiles()
+			.map((path) => $app.vault.getAbstractFileByPath(path))
+			.filter((file) => file instanceof TFile) as TFile[];
+		const items = await searchInFiles($app, query, files);
+		results = items.map((item) => {
 			return { file: item.file, matches: item.path?.matches ?? [] };
 		});
+
+		// const files = $app.vault.getFiles();
+		// const items = sortResultItemsInFilePathSearch(
+		// 	fuzzySearchInFilePaths(query, files)
+		// );
+		// results = items.map((item) => {
+		// 	return { file: item.file, matches: item.path?.matches ?? [] };
+		// });
 	}
 </script>
 

@@ -56,22 +56,71 @@ export function sortResultItemsInFilePathSearch(
 export interface FileSearchResultItem {
 	file: TFile;
 	name: SearchResult | null;
+	path: SearchResult | null;
 	content: SearchResult | null;
 }
 
-export function searchInFiles(
+// results are sorted by last opened date (new -> old)
+export async function searchInFiles(
 	app: App,
 	query: string,
 	files: TFile[]
-): FileSearchResultItem[] {
+): Promise<FileSearchResultItem[]> {
 	const search = prepareSimpleSearch(query);
 	const items: FileSearchResultItem[] = [];
-	files.forEach(async (file) => {
+	for (const file of files) {
 		const inName = search(file.name);
-		const inContent = search(await app.vault.cachedRead(file));
-		items.push({ file: file, name: inName, content: inContent });
-	});
+		const inPath = search(file.path);
+		const inContent =
+			file.extension === 'md'
+				? search(await app.vault.cachedRead(file))
+				: null;
+		console.log(file.extension);
+		items.push({
+			file: file,
+			name: inName,
+			path: inPath,
+			content: inContent,
+		});
+	}
 	return items.filter((item) => {
-		return item.name !== null && item.content !== null;
+		return item.name !== null || item.content !== null;
 	});
 }
+
+// interface FileWithContent {
+// 	file: TFile;
+// 	content: string | undefined; // undefined for non-md files
+// }
+
+// export class RecentSearch {
+// 	private readonly app: App;
+// 	private readonly files: TFile[];
+// 	private filesWithContent: FileWithContent[];
+
+// 	constructor(app: App, files: TFile[]) {
+// 		this.app = app;
+// 		this.files = files;
+// 		this.filesWithContent = [];
+// 	}
+
+// 	async load(): Promise<RecentSearch> {
+// 		await this.onload();
+// 		return this;
+// 	}
+
+// 	async onload() {
+// 		this.filesWithContent = [];
+// 		const { files } = this;
+// 		for (const file of files) {
+// 			const content =
+// 				file.extension === 'md'
+// 					? await this.app.vault.cachedRead(file)
+// 					: undefined;
+// 			this.filesWithContent.push({
+// 				file: file,
+// 				content: content,
+// 			});
+// 		}
+// 	}
+// }
