@@ -170,7 +170,13 @@
 </script>
 
 <div class="modal" bind:this={containerEl}>
-	<div class="modal-background" />
+	<div
+		class="modal-background"
+		on:click={() => {
+			$switcherComponent.unload();
+			containerEl?.remove();
+		}}
+	/>
 
 	<div class="prompt-container">
 		<input class="prompt-input" bind:this={inputEl} bind:value={query} />
