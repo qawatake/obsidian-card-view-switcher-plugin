@@ -78,7 +78,6 @@
 	});
 
 	onDestroy(() => {
-		console.log(id);
 		setTimeout(() => renderer?.unload(), 1000);
 	});
 

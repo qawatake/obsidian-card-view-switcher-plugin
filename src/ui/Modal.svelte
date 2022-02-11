@@ -48,7 +48,6 @@
 
 		results = await getResults('');
 		if (contentEl instanceof HTMLElement) {
-			console.log('onmount');
 			renderCards(contentEl, results, 0);
 		}
 		focusOn(0);
