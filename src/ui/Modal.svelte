@@ -1,8 +1,9 @@
 <script lang="ts">
 	import {
+		App,
 		TFile,
 		type Instruction,
-		type Match,
+		type SearchMatches,
 		type SplitDirection,
 	} from 'obsidian';
 	import { onDestroy, onMount } from 'svelte';
@@ -28,41 +29,56 @@
 	// bind
 	let containerEl: HTMLElement | undefined | null;
 	let inputEl: HTMLInputElement | undefined | null;
+	let contentEl: HTMLElement | undefined | null;
 
 	// state variables
 	interface FoundResult {
 		file: TFile;
-		matches: Match[];
+		matches: SearchMatches;
 	}
 	let results: FoundResult[] = [];
 	let selected = 0;
 	let page = 0;
+	let cards: CardContainer[] = [];
 	// type SearchMode = 'normal' | 'recent';
 	// let mode: SearchMode = 'recent';
 
-	onMount(() => {
+	onMount(async () => {
 		inputEl?.focus();
-		renderRecentFiles();
+
+		results = await getResults('');
+		if (contentEl instanceof HTMLElement) {
+			console.log('onmount');
+			renderCards(contentEl, results, 0);
+		}
+		focusOn(0);
 	});
 
 	onDestroy(() => {
-		// unsubscribers.forEach((unsubscriber) => unsubscriber());
+		detachCards();
 	});
 
 	export function navigateForward() {
 		// update selected
 		let updated = true;
 		selected++;
-		// if (selected >= files.length) {
+
 		if (selected >= results.length) {
 			selected = results.length - 1;
 			updated = false;
 		}
 
+		focusOn(selected);
+
 		// update page
 		if (updated) {
 			const shouldTransitNextPage = selected % CARDS_PER_PAGE === 0;
-			if (shouldTransitNextPage) page++;
+			if (shouldTransitNextPage) {
+				page++;
+				if (contentEl instanceof HTMLElement) {
+					renderCards(contentEl, results, page);
+				}
+			}
 		}
 	}
 
@@ -75,11 +91,18 @@
 			updated = false;
 		}
 
+		focusOn(selected);
+
 		// update page
 		if (updated) {
 			const shouldTransitPreviousPage =
 				(selected + 1) % CARDS_PER_PAGE === 0;
-			if (shouldTransitPreviousPage) page--;
+			if (shouldTransitPreviousPage) {
+				page--;
+				if (contentEl instanceof HTMLElement) {
+					renderCards(contentEl, results, page);
+				}
+			}
 		}
 	}
 
@@ -96,17 +119,37 @@
 		containerEl?.remove();
 	}
 
-	function renderRecentFiles() {
-		const paths = $app.workspace.getLastOpenFiles();
-		// files = [];
-		results = [];
-		paths.forEach((path) => {
-			const file = $app.vault.getAbstractFileByPath(path);
-			if (file instanceof TFile) {
-				results.push({
-					file: file,
-					matches: [],
-				});
+	async function onInput(evt: Event) {
+		if (!(evt instanceof InputEvent)) {
+			return;
+		}
+		const inputEl = evt.target;
+		if (!(inputEl instanceof HTMLInputElement)) return;
+		const changed = changeMode(inputEl, evt);
+		if (changed) return;
+
+		// refresh
+		selected = 0;
+		page = 0;
+		contentEl?.empty();
+		detachCards();
+
+		results = await getResults(inputEl.value);
+		if (contentEl instanceof HTMLElement) {
+			renderCards(contentEl, results, 0);
+		}
+		focusOn(0);
+	}
+
+	function focusOn(id: number) {
+		const pos = id % CARDS_PER_PAGE; // id in results => position in cards
+		[-1, 0, 1].forEach((i) => {
+			const card = cards[pos + i];
+			if (!card) return;
+			if (i == 0) {
+				card.$set({ selected: true });
+			} else {
+				card.$set({ selected: false });
 			}
 		});
 	}
@@ -120,33 +163,16 @@
 		$app.workspace.setActiveLeaf(leaf, true, true);
 	}
 
-	function onInput(evt: Event) {
-		if (!(evt instanceof InputEvent)) {
-			return;
-		}
-		const inputEl = evt.target;
-		if (!(inputEl instanceof HTMLInputElement)) return;
-		const changed = shouldChangeMode(inputEl, evt);
-		if (changed) return;
-
-		renderResults(inputEl.value);
-	}
-
-	async function renderResults(query: string) {
-		selected = 0;
-		page = 0;
+	async function getResults(query: string): Promise<FoundResult[]> {
+		let results: FoundResult[];
 
 		if (query === '') {
-			renderRecentFiles();
-			return;
-		}
-
-		results = [];
-		if (!query.startsWith("'")) {
-			const files = $app.workspace
-				.getLastOpenFiles()
-				.map((path) => $app.vault.getAbstractFileByPath(path))
-				.filter((file) => file instanceof TFile) as TFile[];
+			const files = getRecentFiles($app);
+			results = files.map((file) => {
+				return { file: file, matches: [] };
+			});
+		} else if (!query.startsWith("'")) {
+			const files = getRecentFiles($app);
 			const items = await searchInFiles($app, query, files);
 			results = items.map((item) => {
 				return { file: item.file, matches: item.path?.matches ?? [] };
@@ -161,18 +187,62 @@
 				return { file: item.file, matches: item.path?.matches ?? [] };
 			});
 		}
+		return results;
 	}
 
-	function shouldChangeMode(
-		inputEl: HTMLInputElement,
-		evt: InputEvent
-	): boolean {
+	function getRecentFiles(app: App): TFile[] {
+		const files = app.workspace
+			.getLastOpenFiles()
+			.map((path) => app.vault.getAbstractFileByPath(path))
+			.filter((file) => file instanceof TFile) as TFile[];
+		return files;
+	}
+
+	/**
+	 *
+	 * @returns whether mode change occurs
+	 */
+	function changeMode(inputEl: HTMLInputElement, evt: InputEvent): boolean {
 		if (evt.data === ' ' && inputEl.value === evt.data) {
 			evt.preventDefault();
 			inputEl.value = "'";
 			return true;
 		}
 		return false;
+	}
+
+	function renderCards(
+		contentEl: HTMLElement,
+		results: FoundResult[],
+		page: number
+	) {
+		// refresh
+		contentEl.empty();
+		detachCards();
+
+		for (
+			let id = CARDS_PER_PAGE * page;
+			id < CARDS_PER_PAGE * (page + 1);
+			id++
+		) {
+			const result = results[id];
+			if (!result) continue;
+			const card = new CardContainer({
+				target: contentEl,
+				props: {
+					id: id,
+					file: result.file,
+					matches: result.matches,
+					selected: false,
+				},
+			});
+			cards.push(card);
+		}
+	}
+
+	function detachCards() {
+		cards.forEach((card) => card.$destroy());
+		cards = [];
 	}
 </script>
 
@@ -204,20 +274,7 @@
 		</div>
 	</div>
 
-	<div class="cards-container">
-		{#each results.slice(page * CARDS_PER_PAGE, (page + 1) * CARDS_PER_PAGE) as result, id (result)}
-			<CardContainer
-				id={CARDS_PER_PAGE * page + id}
-				file={result.file}
-				matches={result.matches}
-				selected={selected === CARDS_PER_PAGE * page + id}
-				on:click={() => {
-					selected = CARDS_PER_PAGE * page + id;
-					open();
-				}}
-			/>
-		{/each}
-	</div>
+	<div class="cards-container" bind:this={contentEl} />
 </div>
 
 <style>
