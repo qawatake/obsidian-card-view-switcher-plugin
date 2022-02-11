@@ -78,6 +78,7 @@
 				if (contentEl instanceof HTMLElement) {
 					renderCards(contentEl, results, page);
 				}
+				focusOn(selected);
 			}
 		}
 	}
@@ -102,6 +103,7 @@
 				if (contentEl instanceof HTMLElement) {
 					renderCards(contentEl, results, page);
 				}
+				focusOn(selected);
 			}
 		}
 	}
