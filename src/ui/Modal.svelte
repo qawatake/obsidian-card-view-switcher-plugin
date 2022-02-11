@@ -120,9 +120,7 @@
 	}
 
 	async function onInput(evt: Event) {
-		if (!(evt instanceof InputEvent)) {
-			return;
-		}
+		if (!(evt instanceof InputEvent)) return;
 		const inputEl = evt.target;
 		if (!(inputEl instanceof HTMLInputElement)) return;
 		const changed = changeMode(inputEl, evt);
@@ -131,8 +129,8 @@
 		// refresh
 		selected = 0;
 		page = 0;
-		contentEl?.empty();
 		detachCards();
+		// contentEl?.empty(); // unnecessary. rather cause error when used
 
 		results = await getResults(inputEl.value);
 		if (contentEl instanceof HTMLElement) {
@@ -190,14 +188,6 @@
 		return results;
 	}
 
-	function getRecentFiles(app: App): TFile[] {
-		const files = app.workspace
-			.getLastOpenFiles()
-			.map((path) => app.vault.getAbstractFileByPath(path))
-			.filter((file) => file instanceof TFile) as TFile[];
-		return files;
-	}
-
 	/**
 	 *
 	 * @returns whether mode change occurs
@@ -217,7 +207,7 @@
 		page: number
 	) {
 		// refresh
-		contentEl.empty();
+		// contentEl.empty(); // unnecessary. rather cause error when used
 		detachCards();
 
 		for (
@@ -236,6 +226,10 @@
 					selected: false,
 				},
 			});
+			card.$on('click', () => {
+				selected = id;
+				open();
+			});
 			cards.push(card);
 		}
 	}
@@ -243,6 +237,14 @@
 	function detachCards() {
 		cards.forEach((card) => card.$destroy());
 		cards = [];
+	}
+
+	function getRecentFiles(app: App): TFile[] {
+		const files = app.workspace
+			.getLastOpenFiles()
+			.map((path) => app.vault.getAbstractFileByPath(path))
+			.filter((file) => file instanceof TFile) as TFile[];
+		return files;
 	}
 </script>
 
