@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		App,
+		debounce,
 		TFile,
 		type Instruction,
 		type SearchMatches,
@@ -42,6 +43,9 @@
 	let cards: CardContainer[] = [];
 	// type SearchMode = 'normal' | 'recent';
 	// let mode: SearchMode = 'recent';
+
+	// debouncer
+	const searchAndRenderDebouncer = debounce(searchAndRender, 100, true);
 
 	onMount(async () => {
 		inputEl?.focus();
@@ -127,6 +131,10 @@
 		const changed = changeMode(inputEl, evt);
 		if (changed) return;
 
+		searchAndRenderDebouncer(inputEl);
+	}
+
+	async function searchAndRender(inputEl: HTMLInputElement) {
 		// refresh
 		selected = 0;
 		page = 0;
