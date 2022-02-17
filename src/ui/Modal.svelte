@@ -15,6 +15,7 @@
 		searchInFiles,
 		sortResultItemsInFilePathSearch,
 	} from 'utils/Search';
+	import { delay } from 'utils/Util';
 
 	// const
 	const CARDS_PER_PAGE = 10;
@@ -263,8 +264,7 @@
 	<div
 		class="modal-background"
 		on:click={() => {
-			$switcherComponent.unload();
-			containerEl?.remove();
+			dispatcher('should-destroy');
 		}}
 	/>
 
@@ -274,8 +274,9 @@
 			placeholder="Hit space key to toggle the normal search mode"
 			bind:this={inputEl}
 			on:input={onInput}
-			on:blur={() => {
-				dispatcher('input-unfocus', { target: inputEl });
+			on:blur={async () => {
+				await delay(100); // necessary to prevent refocus after unloading modal
+				inputEl?.focus();
 			}}
 		/>
 		<div class="prompt-instruction-container">
