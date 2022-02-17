@@ -47,6 +47,9 @@
 	// debouncer
 	const searchAndRenderDebouncer = debounce(searchAndRender, 100, true);
 
+	// event dispatcher
+	// const dispatcher = createEventDispatcher();
+
 	onMount(async () => {
 		inputEl?.focus();
 
@@ -130,7 +133,6 @@
 		if (!(inputEl instanceof HTMLInputElement)) return;
 		const changed = changeMode(inputEl, evt);
 		if (changed) return;
-
 		searchAndRenderDebouncer(inputEl);
 	}
 
@@ -272,6 +274,7 @@
 			placeholder="Hit space key to toggle the normal search mode"
 			bind:this={inputEl}
 			on:input={onInput}
+			on:blur
 		/>
 		<div class="prompt-instruction-container">
 			{#each instructions as instruction}

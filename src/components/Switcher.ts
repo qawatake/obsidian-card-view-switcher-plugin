@@ -39,6 +39,13 @@ export class Switcher extends Component {
 		this.modal = new Modal({
 			target: document.body,
 		});
+
+		// blur occurs for example when excalidraw file is loaded
+		this.modal.$on('blur', (evt) => {
+			const targetEl = evt.target;
+			if (!(targetEl instanceof HTMLInputElement)) return;
+			targetEl.focus();
+		});
 	}
 
 	private setHotkeys() {
