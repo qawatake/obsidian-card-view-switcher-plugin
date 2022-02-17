@@ -6,6 +6,7 @@ import {
 	type CardViewSwitcherSettings,
 } from 'Setting';
 import { deepMerge } from 'utils/Util';
+import * as store from 'ui/store';
 
 export default class CardViewSwitcherPlugin extends Plugin {
 	settings: CardViewSwitcherSettings | undefined;
@@ -22,6 +23,10 @@ export default class CardViewSwitcherPlugin extends Plugin {
 		});
 
 		this.addSettingTab(new CardViewSwitcherSettingTab(this.app, this));
+
+		// set store values
+		store.plugin.set(this);
+		store.app.set(this.app);
 	}
 
 	// override onunload() {}

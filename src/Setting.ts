@@ -77,6 +77,10 @@ export const DEFAULT_SETTINGS: CardViewSwitcherSettings = {
 		selectPrevious: [
 			{
 				modifiers: ['Ctrl'],
+				key: 'p',
+			},
+			{
+				modifiers: [],
 				key: 'ArrowUp',
 			},
 		],
@@ -86,15 +90,15 @@ export const DEFAULT_SETTINGS: CardViewSwitcherSettings = {
 				key: 'Enter',
 			},
 		],
-		openInNewPaneVertically: [
-			{
-				modifiers: ['Ctrl', 'Shift'],
-				key: 'Enter',
-			},
-		],
 		openInNewPaneHorizontally: [
 			{
 				modifiers: ['Ctrl'],
+				key: 'Enter',
+			},
+		],
+		openInNewPaneVertically: [
+			{
+				modifiers: ['Ctrl', 'Shift'],
 				key: 'Enter',
 			},
 		],
@@ -107,12 +111,12 @@ export const DEFAULT_SETTINGS: CardViewSwitcherSettings = {
 	},
 };
 
-const HOTKEY_ACTION_IDS = [
+export const HOTKEY_ACTION_IDS = [
 	'selectNext',
 	'selectPrevious',
 	'open',
-	'openInNewPaneVertically',
 	'openInNewPaneHorizontally',
+	'openInNewPaneVertically',
 	'copyLink',
 ] as const;
 
@@ -126,7 +130,7 @@ type HotkeyMap = {
  * key: actionId
  * value: human friendly name
  */
-const HOTKEY_ACTION_INFO: {
+export const HOTKEY_ACTION_INFO: {
 	[actionId in HotkeyActionId]: {
 		description: string;
 		short: string;

@@ -7,9 +7,11 @@
 		type SearchMatches,
 		type SplitDirection,
 	} from 'obsidian';
+	import { HOTKEY_ACTION_IDS, HOTKEY_ACTION_INFO } from 'Setting';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import CardContainer from 'ui/CardContainer.svelte';
-	import { app, switcherComponent } from 'ui/store';
+	import { app, plugin, switcherComponent } from 'ui/store';
+	import { convertHotkeyToText } from 'utils/Keymap';
 	import {
 		fuzzySearchInFilePaths,
 		searchInFiles,
@@ -19,14 +21,32 @@
 
 	// const
 	const CARDS_PER_PAGE = 10;
-	const instructions: Instruction[] = [
-		{ command: '↑↓', purpose: 'to navigate' },
-		{ command: 'ctrl + n/p', purpose: 'to navigate' },
-		{ command: '↵', purpose: 'to open' },
-		{ command: 'ctrl + ↵', purpose: 'to open horizontally' },
-		{ command: 'ctrl + shift + ↵', purpose: 'to open vertically' },
-		{ command: 'esc', purpose: 'to dismiss' },
-	];
+	// const instructions: Instruction[] = [
+	// 	{ command: '↑↓', purpose: 'to navigate' },
+	// 	{ command: 'ctrl + n/p', purpose: 'to navigate' },
+	// 	{ command: '↵', purpose: 'to open' },
+	// 	{ command: 'ctrl + ↵', purpose: 'to open horizontally' },
+	// 	{ command: 'ctrl + shift + ↵', purpose: 'to open vertically' },
+	// 	{ command: 'esc', purpose: 'to dismiss' },
+	// ];
+	const instructions: (Instruction | undefined)[] = HOTKEY_ACTION_IDS.map(
+		(actionId) => {
+			const hotkeys = $plugin.settings?.hotkeys[actionId];
+			if (!hotkeys) return undefined;
+			const purpose = 'to ' + HOTKEY_ACTION_INFO[actionId].short;
+			const cmd: string = hotkeys
+				.map((hotkey) => convertHotkeyToText(hotkey).toLowerCase())
+				.join(', ');
+			return {
+				command: cmd,
+				purpose: purpose,
+			};
+		}
+	);
+	instructions.push({
+		command: 'esc',
+		purpose: 'to dismiss',
+	});
 
 	// bind
 	let containerEl: HTMLElement | undefined | null;

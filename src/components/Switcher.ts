@@ -1,6 +1,5 @@
 import { App, Component, Notice, Scope, TFile } from 'obsidian';
 import Modal from 'ui/Modal.svelte';
-import * as store from 'ui/store';
 import { generateInternalLinkFrom } from 'utils/Link';
 
 export class Switcher extends Component {
@@ -35,8 +34,7 @@ export class Switcher extends Component {
 			}
 		});
 
-		store.app.set(this.app);
-		store.switcherComponent.set(this);
+		// store.switcherComponent.set(this);
 		this.modal = new Modal({
 			target: document.body,
 		});
