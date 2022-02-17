@@ -35,7 +35,7 @@
 			if (!hotkeys) return undefined;
 			const purpose = 'to ' + HOTKEY_ACTION_INFO[actionId].short;
 			const cmd: string = hotkeys
-				.map((hotkey) => convertHotkeyToText(hotkey).toLowerCase())
+				.map((hotkey) => convertHotkeyToText(hotkey))
 				.join(', ');
 			return {
 				command: cmd,
