@@ -1,6 +1,7 @@
 import { App, Component, Scope, TFile } from 'obsidian';
 import Modal from 'ui/Modal.svelte';
 import * as store from 'ui/store';
+import { delay } from 'utils/Util';
 
 export class Switcher extends Component {
 	private readonly app: App;
@@ -40,9 +41,10 @@ export class Switcher extends Component {
 			target: document.body,
 		});
 
-		// blur occurs for example when excalidraw file is loaded
-		this.modal.$on('blur', (evt) => {
-			const targetEl = evt.target;
+		// blur occurs for example when showing excalidraw files
+		this.modal.$on('input-unfocus', async (evt) => {
+			await delay(100); // necessary to prevent refocus after unloading modal
+			const targetEl = evt.detail['target'];
 			if (!(targetEl instanceof HTMLInputElement)) return;
 			targetEl.focus();
 		});

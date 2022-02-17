@@ -7,7 +7,7 @@
 		type SearchMatches,
 		type SplitDirection,
 	} from 'obsidian';
-	import { onDestroy, onMount } from 'svelte';
+	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import CardContainer from 'ui/CardContainer.svelte';
 	import { app, switcherComponent } from 'ui/store';
 	import {
@@ -48,7 +48,7 @@
 	const searchAndRenderDebouncer = debounce(searchAndRender, 100, true);
 
 	// event dispatcher
-	// const dispatcher = createEventDispatcher();
+	const dispatcher = createEventDispatcher();
 
 	onMount(async () => {
 		inputEl?.focus();
@@ -274,7 +274,9 @@
 			placeholder="Hit space key to toggle the normal search mode"
 			bind:this={inputEl}
 			on:input={onInput}
-			on:blur
+			on:blur={() => {
+				dispatcher('input-unfocus', { target: inputEl });
+			}}
 		/>
 		<div class="prompt-instruction-container">
 			{#each instructions as instruction}
