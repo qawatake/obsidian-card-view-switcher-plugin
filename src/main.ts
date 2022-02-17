@@ -18,7 +18,7 @@ export default class CardViewSwitcherPlugin extends Plugin {
 			id: 'card-view-switcher:open',
 			name: 'Open switcher',
 			callback: () => {
-				this.addChild(new Switcher(this.app));
+				this.addChild(new Switcher(this.app, this));
 			},
 		});
 

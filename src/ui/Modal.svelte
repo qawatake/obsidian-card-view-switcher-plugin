@@ -10,7 +10,7 @@
 	import { HOTKEY_ACTION_IDS, HOTKEY_ACTION_INFO } from 'Setting';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import CardContainer from 'ui/CardContainer.svelte';
-	import { app, plugin, switcherComponent } from 'ui/store';
+	import { app, plugin } from 'ui/store';
 	import { convertHotkeyToText } from 'utils/Keymap';
 	import {
 		fuzzySearchInFilePaths,
@@ -49,7 +49,7 @@
 	});
 
 	// bind
-	let containerEl: HTMLElement | undefined | null;
+	// let containerEl: HTMLElement | undefined | null;
 	let inputEl: HTMLInputElement | undefined | null;
 	let contentEl: HTMLElement | undefined | null;
 
@@ -144,8 +144,7 @@
 			return;
 		}
 		await openFile(file, direction);
-		$switcherComponent.unload();
-		containerEl?.remove();
+		dispatcher('should-destroy');
 	}
 
 	export function selectedFile(): TFile | undefined {
@@ -285,7 +284,7 @@
 	}
 </script>
 
-<div class="modal" bind:this={containerEl}>
+<div class="modal">
 	<div
 		class="modal-background"
 		on:click={() => {
@@ -306,12 +305,14 @@
 		/>
 		<div class="prompt-instruction-container">
 			{#each instructions as instruction}
-				<div class="prompt-instruction">
-					<span class="prompt-instruction-command"
-						>{instruction.command}</span
-					>
-					<span>{instruction.purpose}</span>
-				</div>
+				{#if instruction}
+					<div class="prompt-instruction">
+						<span class="prompt-instruction-command"
+							>{instruction.command}</span
+						>
+						<span>{instruction.purpose}</span>
+					</div>
+				{/if}
 			{/each}
 		</div>
 	</div>

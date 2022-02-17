@@ -1,15 +1,18 @@
+import type CardViewSwitcherPlugin from 'main';
 import { App, Component, Notice, Scope, TFile } from 'obsidian';
 import Modal from 'ui/Modal.svelte';
 import { generateInternalLinkFrom } from 'utils/Link';
 
 export class Switcher extends Component {
 	private readonly app: App;
+	private readonly plugin: CardViewSwitcherPlugin;
 	private modal: Modal | undefined;
 	private scope: Scope;
 
-	constructor(app: App) {
+	constructor(app: App, plugin: CardViewSwitcherPlugin) {
 		super();
 		this.app = app;
+		this.plugin = plugin;
 		this.scope = new Scope();
 	}
 
@@ -45,40 +48,56 @@ export class Switcher extends Component {
 	}
 
 	private setHotkeys() {
+		const { settings } = this.plugin;
+		if (!settings) return;
+		const hotkeyMap = settings.hotkeys;
+
 		this.app.keymap.pushScope(this.scope);
 
-		this.scope?.register(['Ctrl'], 'p', (evt) => {
-			evt.preventDefault(); // to prevent cursor from moving to the start position
-			this.modal?.navigateBack();
+		hotkeyMap.selectPrevious.forEach((hotkey) => {
+			this.scope?.register(hotkey.modifiers, hotkey.key, (evt) => {
+				evt.preventDefault(); // to prevent cursor from moving to the start position
+				this.modal?.navigateBack();
+			});
 		});
-		this.scope?.register(['Ctrl'], 'n', (evt) => {
-			evt.preventDefault(); // to prevent cursor from moving to the end position
-			this.modal?.navigateForward();
+		hotkeyMap.selectNext.forEach((hotkey) => {
+			this.scope?.register(hotkey.modifiers, hotkey.key, (evt) => {
+				evt.preventDefault(); // to prevent cursor from moving to the end position
+				this.modal?.navigateForward();
+			});
 		});
-		this.scope?.register([], 'ArrowUp', () => {
-			this.modal?.navigateBack();
+		// this.scope?.register([], 'ArrowUp', () => {
+		// 	this.modal?.navigateBack();
+		// });
+		// this.scope?.register([], 'ArrowDown', () => {
+		// 	this.modal?.navigateForward();
+		// });
+		hotkeyMap.open.forEach((hotkey) => {
+			this.scope?.register(hotkey.modifiers, hotkey.key, () => {
+				this.modal?.open();
+			});
 		});
-		this.scope?.register([], 'ArrowDown', () => {
-			this.modal?.navigateForward();
+		hotkeyMap.openInNewPaneHorizontally.forEach((hotkey) => {
+			this.scope?.register(hotkey.modifiers, hotkey.key, () => {
+				this.modal?.open('horizontal');
+			});
 		});
-		this.scope?.register([], 'Enter', () => {
-			this.modal?.open();
+		hotkeyMap.openInNewPaneVertically.forEach((hotkey) => {
+			this.scope.register(hotkey.modifiers, hotkey.key, () => {
+				this.modal?.open('vertical');
+			});
 		});
-		this.scope?.register(['Ctrl'], 'Enter', () => {
-			this.modal?.open('horizontal');
-		});
-		this.scope.register(['Ctrl', 'Shift'], 'Enter', () => {
-			this.modal?.open('vertical');
-		});
-		this.scope.register(['Ctrl'], 'i', () => {
-			const file = this.modal?.selectedFile();
-			if (!file) return;
-			const internalLink = generateInternalLinkFrom(
-				this.app.metadataCache,
-				file
-			);
-			navigator.clipboard.writeText(internalLink);
-			new Notice('copy internal link!');
+		hotkeyMap.copyLink.forEach((hotkey) => {
+			this.scope.register(hotkey.modifiers, hotkey.key, () => {
+				const file = this.modal?.selectedFile();
+				if (!file) return;
+				const internalLink = generateInternalLinkFrom(
+					this.app.metadataCache,
+					file
+				);
+				navigator.clipboard.writeText(internalLink);
+				new Notice('copy internal link!');
+			});
 		});
 		this.scope?.register([], 'Escape', () => {
 			this.unload();
