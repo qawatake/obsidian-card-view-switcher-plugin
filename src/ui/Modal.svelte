@@ -128,6 +128,11 @@
 		containerEl?.remove();
 	}
 
+	export function selectedFile(): TFile | undefined {
+		const file = results[selected]?.file;
+		return file;
+	}
+
 	async function onInput(evt: Event) {
 		if (!(evt instanceof InputEvent)) return;
 		const inputEl = evt.target;
