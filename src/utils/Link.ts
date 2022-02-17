@@ -10,9 +10,7 @@ export function generateInternalLinkFrom(
 	file: TFile
 ): string {
 	const link = metadataCache.fileToLinktext(file, '', true);
-	console.log(link);
 	const text = getDisplayText(metadataCache, file);
-	console.log(text);
 	return text !== undefined ? `[[${link} | ${text}]]` : `[[${link}]]`;
 }
 
@@ -21,7 +19,6 @@ function getDisplayText(
 	file: TFile
 ): string | undefined {
 	const cache = metadataCache.getFileCache(file);
-	console.log('cache', cache);
 	if (!cache) return undefined;
 
 	// search 'title' from front matter
@@ -46,7 +43,6 @@ function getTitle(frontmatter?: FrontMatterCache): string | undefined {
 function getFirstH1(headings: HeadingCache[] | undefined) {
 	if (!headings) return undefined;
 	for (const heading of headings) {
-		console.log(heading.level);
 		if (heading.level !== 1) continue;
 		return heading.heading;
 	}

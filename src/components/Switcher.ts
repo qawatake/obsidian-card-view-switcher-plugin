@@ -1,4 +1,4 @@
-import { App, Component, Scope, TFile } from 'obsidian';
+import { App, Component, Notice, Scope, TFile } from 'obsidian';
 import Modal from 'ui/Modal.svelte';
 import * as store from 'ui/store';
 import { generateInternalLinkFrom } from 'utils/Link';
@@ -74,13 +74,13 @@ export class Switcher extends Component {
 		});
 		this.scope.register(['Ctrl'], 'i', () => {
 			const file = this.modal?.selectedFile();
-			console.log(file);
 			if (!file) return;
 			const internalLink = generateInternalLinkFrom(
 				this.app.metadataCache,
 				file
 			);
 			navigator.clipboard.writeText(internalLink);
+			new Notice('copy internal link!');
 		});
 		this.scope?.register([], 'Escape', () => {
 			this.unload();
