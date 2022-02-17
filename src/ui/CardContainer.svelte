@@ -3,6 +3,10 @@
 	import type { Match, TFile } from 'obsidian';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import { ViewGenerator } from 'interfaces/ViewGenerator';
+	import { ExcalidrawViewGeneratorExtension } from 'interfaces/viewGeneratorExtensions/Excalidraw';
+	import { KanbanViewGeneratorExtension } from 'interfaces/viewGeneratorExtensions/Kanban';
+	import { MarkdownViewGeneratorExtension } from 'interfaces/viewGeneratorExtensions/Markdown';
+	import { NonMarkdownViewGeneratorExtension } from 'interfaces/viewGeneratorExtensions/NonMarkdown';
 
 	// consts
 	// extension: file type
@@ -67,11 +71,12 @@
 		if (fileType !== undefined) {
 			// supported file format
 			contentContainerEl.empty();
-			renderer = await new ViewGenerator(
-				$app,
-				contentContainerEl,
-				file
-			).load('preview');
+			renderer = await new ViewGenerator($app, contentContainerEl, file)
+				.registerExtension(new ExcalidrawViewGeneratorExtension($app))
+				.registerExtension(new KanbanViewGeneratorExtension($app))
+				.registerExtension(new MarkdownViewGeneratorExtension())
+				.registerExtension(new NonMarkdownViewGeneratorExtension())
+				.load('preview');
 		}
 
 		// setFileIcon(file);
