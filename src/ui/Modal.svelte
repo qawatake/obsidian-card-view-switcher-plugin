@@ -7,7 +7,10 @@
 		type SearchMatches,
 		type SplitDirection,
 	} from 'obsidian';
-	import { HOTKEY_ACTION_IDS, HOTKEY_ACTION_INFO } from 'Setting';
+	import {
+		CARD_VIEW_MODAL_HOTKEY_ACTION_IDS,
+		HOTKEY_ACTION_INFO,
+	} from 'Setting';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import CardContainer from 'ui/CardContainer.svelte';
 	import { app, plugin } from 'ui/store';
@@ -29,9 +32,9 @@
 	// 	{ command: 'ctrl + shift + ↵', purpose: 'to open vertically' },
 	// 	{ command: 'esc', purpose: 'to dismiss' },
 	// ];
-	const instructions: (Instruction | undefined)[] = HOTKEY_ACTION_IDS.map(
-		(actionId) => {
-			const hotkeys = $plugin.settings?.hotkeys[actionId];
+	const instructions: (Instruction | undefined)[] =
+		CARD_VIEW_MODAL_HOTKEY_ACTION_IDS.map((actionId) => {
+			const hotkeys = $plugin.settings?.cardViewModalHotkeys[actionId];
 			if (!hotkeys) return undefined;
 			const purpose = 'to ' + HOTKEY_ACTION_INFO[actionId].short;
 			const cmd: string = hotkeys
@@ -41,8 +44,7 @@
 				command: cmd,
 				purpose: purpose,
 			};
-		}
-	);
+		});
 	instructions.push({
 		command: 'esc',
 		purpose: 'to dismiss',

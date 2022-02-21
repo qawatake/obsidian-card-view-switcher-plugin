@@ -2,6 +2,7 @@ import type CardViewSwitcherPlugin from 'main';
 import { App, Component, Notice, Scope, TFile } from 'obsidian';
 import Modal from 'ui/Modal.svelte';
 import { generateInternalLinkFrom } from 'utils/Link';
+import { PreviewModal } from './PreviewModal';
 
 export class Switcher extends Component {
 	private readonly app: App;
@@ -50,7 +51,7 @@ export class Switcher extends Component {
 	private setHotkeys() {
 		const { settings } = this.plugin;
 		if (!settings) return;
-		const hotkeyMap = settings.hotkeys;
+		const hotkeyMap = settings.cardViewModalHotkeys;
 
 		this.app.keymap.pushScope(this.scope);
 
@@ -66,12 +67,14 @@ export class Switcher extends Component {
 				this.modal?.navigateForward();
 			});
 		});
-		// this.scope?.register([], 'ArrowUp', () => {
-		// 	this.modal?.navigateBack();
-		// });
-		// this.scope?.register([], 'ArrowDown', () => {
-		// 	this.modal?.navigateForward();
-		// });
+		hotkeyMap.openPreviewModal.forEach((hotkey) => {
+			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
+				evt.preventDefault();
+				const file = this.modal?.selectedFile();
+				if (file === undefined) return;
+				new PreviewModal(this.app, this.plugin, this, file, []).open();
+			});
+		});
 		hotkeyMap.open.forEach((hotkey) => {
 			this.scope?.register(hotkey.modifiers, hotkey.key, () => {
 				this.modal?.open();
