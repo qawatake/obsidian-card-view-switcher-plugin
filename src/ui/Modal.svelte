@@ -20,7 +20,6 @@
 		sortResultItemsInFilePathSearch,
 		type FileSearchResultItem,
 	} from 'utils/Search';
-	import { delay } from 'utils/Util';
 
 	// const
 	const CARDS_PER_PAGE = 10;
@@ -151,7 +150,6 @@
 	}
 
 	export function focusInput() {
-		console.log(inputEl);
 		inputEl?.focus();
 	}
 
@@ -297,10 +295,6 @@
 			placeholder="Hit space key to toggle the normal search mode"
 			bind:this={inputEl}
 			on:input={onInput}
-			on:blur={async () => {
-				await delay(100); // necessary to prevent refocus after unloading modal
-				inputEl?.focus();
-			}}
 		/>
 		<div class="prompt-instruction-container">
 			{#each instructions as instruction}

@@ -19,7 +19,6 @@
 	let renderer: ViewGenerator | undefined;
 
 	onMount(async () => {
-		console.log(file, contentContainerEl);
 		if (!file) {
 			return;
 		}
@@ -48,7 +47,6 @@
 	}
 
 	export function highlightMatches() {
-		console.log(matches);
 		renderer?.highlightMatches(matches ?? []);
 	}
 

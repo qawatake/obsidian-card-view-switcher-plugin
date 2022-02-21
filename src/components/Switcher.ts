@@ -78,8 +78,7 @@ export class Switcher extends Component {
 						this.plugin,
 						this,
 						result.file,
-						result.content?.matches ?? [],
-						this.onPreviewModalClose
+						result.content?.matches ?? []
 					).open();
 				});
 			});
@@ -99,6 +98,11 @@ export class Switcher extends Component {
 				this.modal?.open('vertical');
 			});
 		});
+		hotkeyMap.refocus.forEach((hotkey) => {
+			this.scope.register(hotkey.modifiers, hotkey.key, () => {
+				this.modal?.focusInput();
+			});
+		});
 		hotkeyMap.copyLink.forEach((hotkey) => {
 			this.scope.register(hotkey.modifiers, hotkey.key, () => {
 				const result = this.modal?.selectedResult();
@@ -114,13 +118,6 @@ export class Switcher extends Component {
 		this.scope?.register([], 'Escape', () => {
 			this.unload();
 		});
-	}
-
-	private get onPreviewModalClose(): () => void {
-		return () => {
-			// too fast to focus
-			this.modal?.focusInput();
-		};
 	}
 
 	private detachHotkeys() {

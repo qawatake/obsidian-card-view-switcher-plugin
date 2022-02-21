@@ -22,7 +22,6 @@ export class PreviewModal extends Modal {
 	private readonly switcher: Switcher;
 	private readonly file: TFile;
 	private readonly matches: SearchMatches;
-	private readonly _onClose: () => void;
 	private previewContent: PreviewModalContent | undefined;
 
 	currentFocus: number | undefined;
@@ -32,15 +31,13 @@ export class PreviewModal extends Modal {
 		plugin: CardViewSwitcherPlugin,
 		switcher: Switcher,
 		file: TFile,
-		matches: SearchMatches,
-		onClose: () => void
+		matches: SearchMatches
 	) {
 		super(app);
 		this.plugin = plugin;
 		this.switcher = switcher;
 		this.file = file;
 		this.matches = matches;
-		this._onClose = onClose;
 		this.currentFocus = undefined;
 	}
 
@@ -171,7 +168,6 @@ export class PreviewModal extends Modal {
 
 	override onClose() {
 		this.previewContent?.$destroy();
-		this._onClose();
 	}
 
 	private renderView() {
