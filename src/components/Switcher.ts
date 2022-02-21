@@ -70,9 +70,15 @@ export class Switcher extends Component {
 		hotkeyMap.openPreviewModal.forEach((hotkey) => {
 			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
-				const file = this.modal?.selectedFile();
-				if (file === undefined) return;
-				new PreviewModal(this.app, this.plugin, this, file, []).open();
+				const result = this.modal?.selectedResult();
+				if (result === undefined) return;
+				new PreviewModal(
+					this.app,
+					this.plugin,
+					this,
+					result.file,
+					result.content?.matches ?? []
+				).open();
 			});
 		});
 		hotkeyMap.open.forEach((hotkey) => {
@@ -92,11 +98,11 @@ export class Switcher extends Component {
 		});
 		hotkeyMap.copyLink.forEach((hotkey) => {
 			this.scope.register(hotkey.modifiers, hotkey.key, () => {
-				const file = this.modal?.selectedFile();
-				if (!file) return;
+				const result = this.modal?.selectedResult();
+				if (!result) return;
 				const internalLink = generateInternalLinkFrom(
 					this.app.metadataCache,
-					file
+					result.file
 				);
 				navigator.clipboard.writeText(internalLink);
 				new Notice('copy internal link!');

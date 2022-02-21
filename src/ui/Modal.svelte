@@ -4,7 +4,6 @@
 		debounce,
 		TFile,
 		type Instruction,
-		type SearchMatches,
 		type SplitDirection,
 	} from 'obsidian';
 	import {
@@ -19,6 +18,7 @@
 		fuzzySearchInFilePaths,
 		searchInFiles,
 		sortResultItemsInFilePathSearch,
+		type FileSearchResultItem,
 	} from 'utils/Search';
 	import { delay } from 'utils/Util';
 
@@ -56,11 +56,7 @@
 	let contentEl: HTMLElement | undefined | null;
 
 	// state variables
-	interface FoundResult {
-		file: TFile;
-		matches: SearchMatches;
-	}
-	let results: FoundResult[] = [];
+	let results: FileSearchResultItem[];
 	let selected = 0;
 	let page = 0;
 	let cards: CardContainer[] = [];
@@ -149,9 +145,9 @@
 		dispatcher('should-destroy');
 	}
 
-	export function selectedFile(): TFile | undefined {
-		const file = results[selected]?.file;
-		return file;
+	export function selectedResult(): FileSearchResultItem | undefined {
+		const result = results[selected];
+		return result;
 	}
 
 	async function onInput(evt: Event) {
@@ -199,29 +195,25 @@
 		$app.workspace.setActiveLeaf(leaf, true, true);
 	}
 
-	async function getResults(query: string): Promise<FoundResult[]> {
-		let results: FoundResult[];
+	async function getResults(query: string): Promise<FileSearchResultItem[]> {
+		let results: FileSearchResultItem[];
 
 		if (query === '') {
 			const files = getRecentFiles($app);
 			results = files.map((file) => {
-				return { file: file, matches: [] };
+				return { file: file, name: null, path: null, content: null };
 			});
 		} else if (!query.startsWith("'")) {
 			const files = getRecentFiles($app);
-			const items = await searchInFiles($app, query, files);
-			results = items.map((item) => {
-				return { file: item.file, matches: item.path?.matches ?? [] };
-			});
+			const results = await searchInFiles($app, query, files);
+			return results;
 		} else {
 			const trimmedQuery = query.replace(/^'/, '');
 			const files = $app.vault.getFiles();
-			const items = sortResultItemsInFilePathSearch(
+			const results = sortResultItemsInFilePathSearch(
 				fuzzySearchInFilePaths(trimmedQuery, files)
 			);
-			results = items.map((item) => {
-				return { file: item.file, matches: item.path?.matches ?? [] };
-			});
+			return results;
 		}
 		return results;
 	}
@@ -241,7 +233,7 @@
 
 	function renderCards(
 		contentEl: HTMLElement,
-		results: FoundResult[],
+		results: FileSearchResultItem[],
 		page: number
 	) {
 		// refresh
@@ -260,7 +252,7 @@
 				props: {
 					id: id,
 					file: result.file,
-					matches: result.matches,
+					matches: result?.path?.matches ?? [],
 					selected: false,
 				},
 			});
