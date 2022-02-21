@@ -67,20 +67,23 @@ export class Switcher extends Component {
 				this.modal?.navigateForward();
 			});
 		});
-		hotkeyMap.openPreviewModal.forEach((hotkey) => {
-			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
-				evt.preventDefault();
-				const result = this.modal?.selectedResult();
-				if (result === undefined) return;
-				new PreviewModal(
-					this.app,
-					this.plugin,
-					this,
-					result.file,
-					result.content?.matches ?? []
-				).open();
+		if (!this.app.vault.config.legacyEditor) {
+			hotkeyMap.openPreviewModal.forEach((hotkey) => {
+				this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
+					evt.preventDefault();
+					const result = this.modal?.selectedResult();
+					if (result === undefined) return;
+					new PreviewModal(
+						this.app,
+						this.plugin,
+						this,
+						result.file,
+						result.content?.matches ?? [],
+						this.onPreviewModalClose
+					).open();
+				});
 			});
-		});
+		}
 		hotkeyMap.open.forEach((hotkey) => {
 			this.scope?.register(hotkey.modifiers, hotkey.key, () => {
 				this.modal?.open();
@@ -111,6 +114,13 @@ export class Switcher extends Component {
 		this.scope?.register([], 'Escape', () => {
 			this.unload();
 		});
+	}
+
+	private get onPreviewModalClose(): () => void {
+		return () => {
+			// too fast to focus
+			this.modal?.focusInput();
+		};
 	}
 
 	private detachHotkeys() {

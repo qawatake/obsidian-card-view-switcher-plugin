@@ -150,6 +150,11 @@
 		return result;
 	}
 
+	export function focusInput() {
+		console.log(inputEl);
+		inputEl?.focus();
+	}
+
 	async function onInput(evt: Event) {
 		if (!(evt instanceof InputEvent)) return;
 		const inputEl = evt.target;
