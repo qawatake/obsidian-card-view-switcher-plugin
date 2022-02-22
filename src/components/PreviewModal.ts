@@ -43,7 +43,6 @@ export class PreviewModal extends Modal {
 
 	override async onOpen() {
 		this.renderView();
-		this.previewContent?.highlightMatches();
 
 		const hotkeyMap = this.plugin.settings?.previewModalHotkeys;
 		if (!hotkeyMap) return;

@@ -36,6 +36,7 @@
 				.registerExtension(new NonMarkdownViewGeneratorExtension())
 				.load('source');
 		}
+		highlightMatches(); // it should be called onMount
 	});
 
 	onDestroy(() => {
