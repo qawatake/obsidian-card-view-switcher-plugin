@@ -142,7 +142,7 @@ export class PreviewModal extends Modal {
 			});
 		});
 
-		hotkeyMap.togglePreviewMode.forEach((hotkey) => {
+		hotkeyMap.toggleViewMode.forEach((hotkey) => {
 			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
 				(async () => {

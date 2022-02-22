@@ -223,7 +223,7 @@ export const DEFAULT_SETTINGS: CardViewSwitcherSettings = {
 				key: 'Tab',
 			},
 		],
-		togglePreviewMode: [
+		toggleViewMode: [
 			{
 				modifiers: ['Ctrl'],
 				key: 'e',
@@ -306,7 +306,7 @@ export const PREVIEW_MODAL_HOTKEY_ACTION_IDS = [
 	'closeModal',
 	'focusNext',
 	'focusPrevious',
-	'togglePreviewMode',
+	'toggleViewMode',
 	'copyLink',
 ] as const;
 
@@ -367,9 +367,9 @@ export const PREVIEW_MODAL_HOTKEY_ACTION_INFO: {
 		description: 'Focus on the previous match',
 		short: 'focus previous',
 	},
-	togglePreviewMode: {
-		description: 'Toggle preview mode',
-		short: 'preview',
+	toggleViewMode: {
+		description: 'Toggle view mode',
+		short: 'change view',
 	},
 	copyLink: {
 		description: 'Copy wiki link of the file',

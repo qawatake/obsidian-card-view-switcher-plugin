@@ -34,7 +34,7 @@
 				.registerExtension(new KanbanViewGeneratorExtension($app))
 				.registerExtension(new MarkdownViewGeneratorExtension())
 				.registerExtension(new NonMarkdownViewGeneratorExtension())
-				.load('source');
+				.load('preview');
 		}
 		highlightMatches(); // it should be called onMount
 	});
