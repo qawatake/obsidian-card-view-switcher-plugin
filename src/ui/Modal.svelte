@@ -4,10 +4,12 @@
 		debounce,
 		TFile,
 		type Instruction,
-		type SearchMatches,
 		type SplitDirection,
 	} from 'obsidian';
-	import { HOTKEY_ACTION_IDS, HOTKEY_ACTION_INFO } from 'Setting';
+	import {
+		CARD_VIEW_MODAL_HOTKEY_ACTION_IDS,
+		HOTKEY_ACTION_INFO,
+	} from 'Setting';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import CardContainer from 'ui/CardContainer.svelte';
 	import { app, plugin } from 'ui/store';
@@ -16,8 +18,8 @@
 		fuzzySearchInFilePaths,
 		searchInFiles,
 		sortResultItemsInFilePathSearch,
+		type FileSearchResultItem,
 	} from 'utils/Search';
-	import { delay } from 'utils/Util';
 
 	// const
 	const CARDS_PER_PAGE = 10;
@@ -29,9 +31,9 @@
 	// 	{ command: 'ctrl + shift + ↵', purpose: 'to open vertically' },
 	// 	{ command: 'esc', purpose: 'to dismiss' },
 	// ];
-	const instructions: (Instruction | undefined)[] = HOTKEY_ACTION_IDS.map(
-		(actionId) => {
-			const hotkeys = $plugin.settings?.hotkeys[actionId];
+	const instructions: (Instruction | undefined)[] =
+		CARD_VIEW_MODAL_HOTKEY_ACTION_IDS.map((actionId) => {
+			const hotkeys = $plugin.settings?.cardViewModalHotkeys[actionId];
 			if (!hotkeys) return undefined;
 			const purpose = 'to ' + HOTKEY_ACTION_INFO[actionId].short;
 			const cmd: string = hotkeys
@@ -41,8 +43,7 @@
 				command: cmd,
 				purpose: purpose,
 			};
-		}
-	);
+		});
 	instructions.push({
 		command: 'esc',
 		purpose: 'to dismiss',
@@ -54,11 +55,7 @@
 	let contentEl: HTMLElement | undefined | null;
 
 	// state variables
-	interface FoundResult {
-		file: TFile;
-		matches: SearchMatches;
-	}
-	let results: FoundResult[] = [];
+	let results: FileSearchResultItem[];
 	let selected = 0;
 	let page = 0;
 	let cards: CardContainer[] = [];
@@ -147,9 +144,9 @@
 		dispatcher('should-destroy');
 	}
 
-	export function selectedFile(): TFile | undefined {
-		const file = results[selected]?.file;
-		return file;
+	export function selectedResult(): FileSearchResultItem | undefined {
+		const result = results[selected];
+		return result;
 	}
 
 	async function onInput(evt: Event) {
@@ -197,29 +194,25 @@
 		$app.workspace.setActiveLeaf(leaf, true, true);
 	}
 
-	async function getResults(query: string): Promise<FoundResult[]> {
-		let results: FoundResult[];
+	async function getResults(query: string): Promise<FileSearchResultItem[]> {
+		let results: FileSearchResultItem[];
 
 		if (query === '') {
 			const files = getRecentFiles($app);
 			results = files.map((file) => {
-				return { file: file, matches: [] };
+				return { file: file, name: null, path: null, content: null };
 			});
 		} else if (!query.startsWith("'")) {
 			const files = getRecentFiles($app);
-			const items = await searchInFiles($app, query, files);
-			results = items.map((item) => {
-				return { file: item.file, matches: item.path?.matches ?? [] };
-			});
+			const results = await searchInFiles($app, query, files);
+			return results;
 		} else {
 			const trimmedQuery = query.replace(/^'/, '');
 			const files = $app.vault.getFiles();
-			const items = sortResultItemsInFilePathSearch(
+			const results = sortResultItemsInFilePathSearch(
 				fuzzySearchInFilePaths(trimmedQuery, files)
 			);
-			results = items.map((item) => {
-				return { file: item.file, matches: item.path?.matches ?? [] };
-			});
+			return results;
 		}
 		return results;
 	}
@@ -239,7 +232,7 @@
 
 	function renderCards(
 		contentEl: HTMLElement,
-		results: FoundResult[],
+		results: FileSearchResultItem[],
 		page: number
 	) {
 		// refresh
@@ -258,8 +251,9 @@
 				props: {
 					id: id,
 					file: result.file,
-					matches: result.matches,
+					matches: result?.path?.matches ?? [],
 					selected: false,
+					focusEl: inputEl,
 				},
 			});
 			card.$on('click', () => {
@@ -298,10 +292,6 @@
 			placeholder="Hit space key to toggle the normal search mode"
 			bind:this={inputEl}
 			on:input={onInput}
-			on:blur={async () => {
-				await delay(100); // necessary to prevent refocus after unloading modal
-				inputEl?.focus();
-			}}
 		/>
 		<div class="prompt-instruction-container">
 			{#each instructions as instruction}

@@ -46,6 +46,7 @@
 	export let file: TFile;
 	export let matches: Match[];
 	export let selected: boolean;
+	export let focusEl: HTMLElement | undefined | null; // refocus this element when blur by something like Excalidraw or iframes
 
 	// bind
 	let contentContainerEl: HTMLElement | undefined | null;
@@ -79,6 +80,7 @@
 				.load('preview');
 		}
 
+		focusEl?.focus();
 		// setFileIcon(file);
 	});
 

@@ -6,10 +6,11 @@ import {
 	type TFile,
 } from 'obsidian';
 
-export interface FilePathSearchResultItem {
+export interface FilePathSearchResultItem extends FileSearchResultItem {
 	file: TFile;
 	name: SearchResult | null;
 	path: SearchResult | null;
+	content: undefined;
 }
 
 export function fuzzySearchInFilePaths(
@@ -25,6 +26,7 @@ export function fuzzySearchInFilePaths(
 				file: file,
 				name: matchInFile,
 				path: matchInPath,
+				content: undefined,
 			};
 		})
 		.filter((item) => {
@@ -57,7 +59,7 @@ export interface FileSearchResultItem {
 	file: TFile;
 	name: SearchResult | null;
 	path: SearchResult | null;
-	content: SearchResult | null;
+	content: SearchResult | null | undefined;
 }
 
 // results are sorted by last opened date (new -> old)

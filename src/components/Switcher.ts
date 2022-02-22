@@ -2,6 +2,7 @@ import type CardViewSwitcherPlugin from 'main';
 import { App, Component, Notice, Scope, TFile } from 'obsidian';
 import Modal from 'ui/Modal.svelte';
 import { generateInternalLinkFrom } from 'utils/Link';
+import { PreviewModal } from './PreviewModal';
 
 export class Switcher extends Component {
 	private readonly app: App;
@@ -50,7 +51,7 @@ export class Switcher extends Component {
 	private setHotkeys() {
 		const { settings } = this.plugin;
 		if (!settings) return;
-		const hotkeyMap = settings.hotkeys;
+		const hotkeyMap = settings.cardViewModalHotkeys;
 
 		this.app.keymap.pushScope(this.scope);
 
@@ -66,12 +67,22 @@ export class Switcher extends Component {
 				this.modal?.navigateForward();
 			});
 		});
-		// this.scope?.register([], 'ArrowUp', () => {
-		// 	this.modal?.navigateBack();
-		// });
-		// this.scope?.register([], 'ArrowDown', () => {
-		// 	this.modal?.navigateForward();
-		// });
+		if (!this.app.vault.config.legacyEditor) {
+			hotkeyMap.openPreviewModal.forEach((hotkey) => {
+				this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
+					evt.preventDefault();
+					const result = this.modal?.selectedResult();
+					if (result === undefined) return;
+					new PreviewModal(
+						this.app,
+						this.plugin,
+						this,
+						result.file,
+						result.content?.matches ?? []
+					).open();
+				});
+			});
+		}
 		hotkeyMap.open.forEach((hotkey) => {
 			this.scope?.register(hotkey.modifiers, hotkey.key, () => {
 				this.modal?.open();
@@ -89,11 +100,11 @@ export class Switcher extends Component {
 		});
 		hotkeyMap.copyLink.forEach((hotkey) => {
 			this.scope.register(hotkey.modifiers, hotkey.key, () => {
-				const file = this.modal?.selectedFile();
-				if (!file) return;
+				const result = this.modal?.selectedResult();
+				if (!result) return;
 				const internalLink = generateInternalLinkFrom(
 					this.app.metadataCache,
-					file
+					result.file
 				);
 				navigator.clipboard.writeText(internalLink);
 				new Notice('copy internal link!');
