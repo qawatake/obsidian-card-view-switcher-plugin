@@ -149,10 +149,6 @@
 		return result;
 	}
 
-	export function focusInput() {
-		inputEl?.focus();
-	}
-
 	async function onInput(evt: Event) {
 		if (!(evt instanceof InputEvent)) return;
 		const inputEl = evt.target;
@@ -257,6 +253,7 @@
 					file: result.file,
 					matches: result?.path?.matches ?? [],
 					selected: false,
+					focusEl: inputEl,
 				},
 			});
 			card.$on('click', () => {

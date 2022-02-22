@@ -98,11 +98,6 @@ export class Switcher extends Component {
 				this.modal?.open('vertical');
 			});
 		});
-		hotkeyMap.refocus.forEach((hotkey) => {
-			this.scope.register(hotkey.modifiers, hotkey.key, () => {
-				this.modal?.focusInput();
-			});
-		});
 		hotkeyMap.copyLink.forEach((hotkey) => {
 			this.scope.register(hotkey.modifiers, hotkey.key, () => {
 				const result = this.modal?.selectedResult();

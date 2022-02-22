@@ -147,12 +147,6 @@ export const DEFAULT_SETTINGS: CardViewSwitcherSettings = {
 				key: 'Enter',
 			},
 		],
-		refocus: [
-			{
-				modifiers: ['Ctrl'],
-				key: 'r',
-			},
-		],
 		copyLink: [
 			{
 				modifiers: ['Ctrl'],
@@ -251,7 +245,6 @@ export const CARD_VIEW_MODAL_HOTKEY_ACTION_IDS = [
 	'open',
 	'openInNewPaneHorizontally',
 	'openInNewPaneVertically',
-	'refocus',
 	'copyLink',
 ] as const;
 
@@ -295,10 +288,6 @@ export const HOTKEY_ACTION_INFO: {
 	openInNewPaneHorizontally: {
 		description: 'Open the selected item in a new pane horizontally',
 		short: 'open horizontally',
-	},
-	refocus: {
-		description: 'Focus on the input form',
-		short: 'refocus',
 	},
 	copyLink: {
 		description: 'Copy the internal link of the selected item',
