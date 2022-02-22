@@ -6,7 +6,7 @@ import {
 	type WorkspaceLeaf,
 	MarkdownView,
 } from 'obsidian';
-import type { UnknownObject } from 'types/Guards';
+import type { UnknownObject } from './Shared';
 
 // defined in https://github.com/zsviczian/obsidian-excalidraw-plugin/blob/109fe05302bde0e8fe4e97c3bad6ca3f51f6b6b1/src/constants.ts#L15
 const excalidrawPluginId = 'obsidian-excalidraw-plugin';
@@ -45,6 +45,7 @@ export class ExcalidrawViewGeneratorExtension
 			},
 			{}
 		);
+		leaf.view.editor.blur();
 	}
 
 	async toggleViewMode(leaf: WorkspaceLeaf) {
@@ -61,6 +62,7 @@ export class ExcalidrawViewGeneratorExtension
 			},
 			{}
 		);
+		leaf.view.editor.blur();
 	}
 }
 

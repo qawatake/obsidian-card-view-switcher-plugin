@@ -1,12 +1,13 @@
 import type { ViewGeneratorExtension } from 'interfaces/ViewGenerator';
 import {
+	MarkdownView,
 	Plugin,
 	TextFileView,
 	type App,
 	type MarkdownViewModeType,
 	type WorkspaceLeaf,
 } from 'obsidian';
-import type { UnknownObject } from 'types/Guards';
+import type { UnknownObject } from './Shared';
 
 const kanbanPluginId = 'obsidian-kanban';
 // defined in https://github.com/mgmeyers/obsidian-kanban/blob/8a9a734b723b7f396a1c2c1a3ae22c0daab4e98e/src/parsers/common.ts#L8
@@ -54,6 +55,9 @@ export class KanbanViewGeneratorExtension implements ViewGeneratorExtension {
 				},
 				{}
 			);
+			if (leaf.view instanceof MarkdownView) {
+				leaf.view.editor.blur();
+			}
 		} else {
 			kanban.kanbanFileModes[leaf.id] = kanbanViewType;
 			await kanban.setKanbanView(leaf);
