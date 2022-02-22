@@ -41,13 +41,14 @@ export class CardViewSwitcherSettingTab extends PluginSettingTab {
 				if (added) {
 					// modifier key should be pressed
 					if (added.modifiers.length === 0) return false;
-
 					// avoid collision
-					const collision = Object.values(
-						settings.cardViewModalHotkeys
-					).some((hotkeys) => {
-						return contain(hotkeys, added);
-					});
+					const collision = CARD_VIEW_MODAL_HOTKEY_ACTION_IDS.some(
+						(actionId) => {
+							const hotkeys =
+								settings.cardViewModalHotkeys[actionId];
+							return contain(hotkeys, added);
+						}
+					);
 					if (collision) {
 						new Notice('Hotkeys are conflicting!');
 						return false;
@@ -76,11 +77,13 @@ export class CardViewSwitcherSettingTab extends PluginSettingTab {
 			).onChanged((renewed, added) => {
 				if (added) {
 					// avoid collision
-					const collision = Object.values(
-						settings.previewModalHotkeys
-					).some((hotkeys) => {
-						return contain(hotkeys, added);
-					});
+					const collision = PREVIEW_MODAL_HOTKEY_ACTION_IDS.some(
+						(actionId) => {
+							const hotkeys =
+								settings.previewModalHotkeys[actionId];
+							return contain(hotkeys, added);
+						}
+					);
 					if (collision) {
 						new Notice('Hotkeys are conflicting!');
 						return false;
