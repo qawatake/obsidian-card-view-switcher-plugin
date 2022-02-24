@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { app } from 'ui/store';
-	import type { Match, TFile } from 'obsidian';
+	import type { SearchMatches, TFile } from 'obsidian';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import { ViewGenerator } from 'interfaces/ViewGenerator';
 	import { ExcalidrawViewGeneratorExtension } from 'interfaces/viewGeneratorExtensions/Excalidraw';
@@ -44,7 +44,7 @@
 	// props
 	export let id: number;
 	export let file: TFile;
-	export let matches: Match[];
+	export let matches: SearchMatches;
 	export let selected: boolean;
 	export let focusEl: HTMLElement | undefined | null; // refocus this element when blur by something like Excalidraw or iframes
 
@@ -107,7 +107,7 @@
 
 	function renderFilePath(
 		filePath: string,
-		matches: Match[],
+		matches: SearchMatches,
 		containerEl: HTMLElement
 	) {
 		let cur = 0;
