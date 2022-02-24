@@ -12,7 +12,7 @@
 	} from 'Setting';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import CardContainer from 'ui/CardContainer.svelte';
-	import { app, plugin } from 'ui/store';
+	import { app, plugin, switcher } from 'ui/store';
 	import { convertHotkeyToText } from 'utils/Keymap';
 	import {
 		fuzzySearchInFilePaths,
@@ -140,6 +140,7 @@
 		if (file === undefined) {
 			return;
 		}
+		$switcher.shouldRestoreSelection = false;
 		await openFile(file, direction);
 		dispatcher('should-destroy');
 	}
