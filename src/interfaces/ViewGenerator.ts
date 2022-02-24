@@ -3,9 +3,10 @@ import {
 	type EditorRange,
 	MarkdownView,
 	type MarkdownViewModeType,
-	type Match,
 	TFile,
 	WorkspaceLeaf,
+	type SearchMatches,
+	type SearchMatchPart,
 } from 'obsidian';
 import { delay, scrollIteration } from 'utils/Util';
 
@@ -61,7 +62,7 @@ export class ViewGenerator {
 
 	// it should be called once because is is not idempotent
 	// it can be called even when view mode = 'preview'
-	highlightMatches(matches: Match[]) {
+	highlightMatches(matches: SearchMatches) {
 		const view = this.leaf.view;
 		if (!(view instanceof MarkdownView)) {
 			return;
@@ -78,7 +79,7 @@ export class ViewGenerator {
 		editor.addHighlights(ranges, 'highlight-search-match');
 	}
 
-	async scrollIntoView(match: Match, center?: boolean) {
+	async scrollIntoView(match: SearchMatchPart, center?: boolean) {
 		const view = this.leaf.view;
 		if (!(view instanceof MarkdownView)) {
 			return;
@@ -103,7 +104,7 @@ export class ViewGenerator {
 		}
 	}
 
-	async focusOn(match: Match, center?: boolean) {
+	async focusOn(match: SearchMatchPart, center?: boolean) {
 		const view = this.leaf.view;
 		if (!(view instanceof MarkdownView)) {
 			return;
