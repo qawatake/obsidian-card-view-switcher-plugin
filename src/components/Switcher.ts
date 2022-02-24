@@ -3,22 +3,28 @@ import { App, Component, Notice, Scope, TFile } from 'obsidian';
 import Modal from 'ui/Modal.svelte';
 import { generateInternalLinkFrom } from 'utils/Link';
 import { PreviewModal } from './PreviewModal';
+import * as store from 'ui/store';
 
 export class Switcher extends Component {
 	private readonly app: App;
 	private readonly plugin: CardViewSwitcherPlugin;
 	private modal: Modal | undefined;
 	private scope: Scope;
+	private selection: Selection | undefined;
+	public shouldRestoreSelection: boolean;
 
 	constructor(app: App, plugin: CardViewSwitcherPlugin) {
 		super();
 		this.app = app;
 		this.plugin = plugin;
 		this.scope = new Scope();
+		this.shouldRestoreSelection = true;
 	}
 
-	override onload(): void {
+	public override onload(): void {
+		store.switcher.set(this);
 		this.setHotkeys();
+		this.selection = this.fetchSelection();
 
 		this.openModal();
 	}
@@ -26,6 +32,9 @@ export class Switcher extends Component {
 	override onunload(): void {
 		this.detachHotkeys();
 		this.modal?.$destroy();
+		if (this.shouldRestoreSelection) {
+			this.restoreSelection(this.selection);
+		}
 	}
 
 	private openModal() {
@@ -118,4 +127,39 @@ export class Switcher extends Component {
 	private detachHotkeys() {
 		this.app.keymap.popScope(this.scope);
 	}
+
+	private fetchSelection(): Selection | undefined {
+		const s = window.getSelection();
+		if (!s) return undefined;
+		return {
+			range: s.rangeCount > 0 ? s.getRangeAt(0) : null,
+			focusEl: document.activeElement,
+		};
+	}
+
+	private restoreSelection(selection: Selection | undefined) {
+		if (!selection) return;
+
+		const { focusEl, range } = selection;
+		if (
+			range &&
+			document.body.contains(range.startContainer) &&
+			document.body.contains(range.endContainer)
+		) {
+			const s = window.getSelection();
+			s?.removeAllRanges();
+			s?.addRange(range);
+		}
+		if (
+			(focusEl instanceof HTMLElement || focusEl instanceof SVGElement) &&
+			document.body.contains(focusEl)
+		) {
+			focusEl.focus();
+		}
+	}
+}
+
+interface Selection {
+	range: Range | null;
+	focusEl: Element | null;
 }
