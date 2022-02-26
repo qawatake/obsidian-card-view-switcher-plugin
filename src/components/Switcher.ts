@@ -93,22 +93,26 @@ export class Switcher extends Component {
 			});
 		}
 		hotkeyMap.open.forEach((hotkey) => {
-			this.scope?.register(hotkey.modifiers, hotkey.key, () => {
+			this.scope?.register(hotkey.modifiers, hotkey.key, (evt) => {
+				evt.preventDefault();
 				this.modal?.open();
 			});
 		});
 		hotkeyMap.openInNewPaneHorizontally.forEach((hotkey) => {
-			this.scope?.register(hotkey.modifiers, hotkey.key, () => {
+			this.scope?.register(hotkey.modifiers, hotkey.key, (evt) => {
+				evt.preventDefault();
 				this.modal?.open('horizontal');
 			});
 		});
 		hotkeyMap.openInNewPaneVertically.forEach((hotkey) => {
-			this.scope.register(hotkey.modifiers, hotkey.key, () => {
+			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
+				evt.preventDefault();
 				this.modal?.open('vertical');
 			});
 		});
 		hotkeyMap.copyLink.forEach((hotkey) => {
-			this.scope.register(hotkey.modifiers, hotkey.key, () => {
+			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
+				evt.preventDefault();
 				const result = this.modal?.selectedResult();
 				if (!result) return;
 				const internalLink = generateInternalLinkFrom(
@@ -119,7 +123,8 @@ export class Switcher extends Component {
 				new Notice('copy internal link!');
 			});
 		});
-		this.scope?.register([], 'Escape', () => {
+		this.scope?.register([], 'Escape', (evt) => {
+			evt.preventDefault();
 			this.unload();
 		});
 	}
