@@ -39,8 +39,9 @@ export class CardViewSwitcherSettingTab extends PluginSettingTab {
 				defaultHotkeys
 			).onChanged((renewed, added) => {
 				if (added) {
-					// modifier key should be pressed
-					if (added.modifiers.length === 0) return false;
+					// modifier key should be pressed or it should be enter key
+					if (added.modifiers.length === 0 && added.key !== 'Enter')
+						return false;
 					// avoid collision
 					const collision = CARD_VIEW_MODAL_HOTKEY_ACTION_IDS.some(
 						(actionId) => {
