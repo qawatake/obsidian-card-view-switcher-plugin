@@ -10,6 +10,7 @@ import * as store from 'ui/store';
 
 export default class CardViewSwitcherPlugin extends Plugin {
 	settings: CardViewSwitcherSettings | undefined;
+	private switcher: Switcher | undefined;
 
 	override async onload() {
 		await this.loadSettings();
@@ -18,7 +19,7 @@ export default class CardViewSwitcherPlugin extends Plugin {
 			id: 'card-view-switcher:open',
 			name: 'Open switcher',
 			callback: () => {
-				this.addChild(new Switcher(this.app, this));
+				this.renewSwitcher();
 			},
 		});
 
@@ -36,5 +37,12 @@ export default class CardViewSwitcherPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	private renewSwitcher() {
+		if (this.switcher) {
+			this.removeChild(this.switcher);
+		}
+		this.switcher = this.addChild(new Switcher(this.app, this));
 	}
 }
