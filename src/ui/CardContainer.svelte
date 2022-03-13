@@ -20,6 +20,7 @@
 		gif: 'image',
 		bmp: 'image',
 		svg: 'image',
+		webp: 'image',
 		mp3: 'audio',
 		webm: 'audio',
 		wav: 'audio',
