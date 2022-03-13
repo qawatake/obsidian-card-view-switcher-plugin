@@ -140,3 +140,26 @@ export interface ViewGeneratorExtension {
 	): void | Promise<void>;
 	toggleViewMode(leaf: WorkspaceLeaf): void | Promise<void>;
 }
+
+const FILE_TYPES = ['md', 'image', 'audio', 'movie', 'pdf'] as const;
+type FileType = typeof FILE_TYPES[number];
+export const fileTypeMap: { [extension: string]: FileType } = {
+	md: 'md',
+	png: 'image',
+	jpg: 'image',
+	jpeg: 'image',
+	gif: 'image',
+	bmp: 'image',
+	svg: 'image',
+	webp: 'image',
+	mp3: 'audio',
+	webm: 'audio',
+	wav: 'audio',
+	m4a: 'audio',
+	ogg: 'audio',
+	'3gp': 'audio',
+	flac: 'audio',
+	mp4: 'movie',
+	ogv: 'movie',
+	pdf: 'pdf',
+};

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ViewGenerator } from 'interfaces/ViewGenerator';
+	import { fileTypeMap, ViewGenerator } from 'interfaces/ViewGenerator';
 	import { ExcalidrawViewGeneratorExtension } from 'interfaces/viewGeneratorExtensions/Excalidraw';
 	import { KanbanViewGeneratorExtension } from 'interfaces/viewGeneratorExtensions/Kanban';
 	import { MarkdownViewGeneratorExtension } from 'interfaces/viewGeneratorExtensions/Markdown';
@@ -60,27 +60,27 @@
 		renderer?.focusOn(match, center);
 	}
 
-	const FILE_TYPES = ['md', 'image', 'audio', 'movie', 'pdf'] as const;
-	type FileType = typeof FILE_TYPES[number];
-	const fileTypeMap: { [extension: string]: FileType } = {
-		md: 'md',
-		png: 'image',
-		jpg: 'image',
-		jpeg: 'image',
-		gif: 'image',
-		bmp: 'image',
-		svg: 'image',
-		mp3: 'audio',
-		webm: 'audio',
-		wav: 'audio',
-		m4a: 'audio',
-		ogg: 'audio',
-		'3gp': 'audio',
-		flac: 'audio',
-		mp4: 'movie',
-		ogv: 'movie',
-		pdf: 'pdf',
-	};
+	// const FILE_TYPES = ['md', 'image', 'audio', 'movie', 'pdf'] as const;
+	// type FileType = typeof FILE_TYPES[number];
+	// const fileTypeMap: { [extension: string]: FileType } = {
+	// 	md: 'md',
+	// 	png: 'image',
+	// 	jpg: 'image',
+	// 	jpeg: 'image',
+	// 	gif: 'image',
+	// 	bmp: 'image',
+	// 	svg: 'image',
+	// 	mp3: 'audio',
+	// 	webm: 'audio',
+	// 	wav: 'audio',
+	// 	m4a: 'audio',
+	// 	ogg: 'audio',
+	// 	'3gp': 'audio',
+	// 	flac: 'audio',
+	// 	mp4: 'movie',
+	// 	ogv: 'movie',
+	// 	pdf: 'pdf',
+	// };
 </script>
 
 <div class="content-container" bind:this={contentContainerEl} />
