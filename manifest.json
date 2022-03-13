@@ -1,7 +1,7 @@
 {
 	"id": "obsidian-card-view-switcher-plugin",
 	"name": "Card View Switcher",
-	"version": "0.3.4",
+	"version": "0.3.5",
 	"minAppVersion": "0.12.0",
 	"description": "Quick switcher with card view",
 	"author": "qawatake",
