@@ -134,6 +134,13 @@
 	}
 
 	/*
+	render pdf correctly
+    */
+	.content-container :global(.workspace-leaf-content[data-type='pdf']) {
+		height: 990px;
+	}
+
+	/*
 		render source view correctly
 	*/
 	.content-container :global(.markdown-source-view.mod-cm6 .cm-editor) {
