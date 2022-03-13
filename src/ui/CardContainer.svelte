@@ -274,6 +274,7 @@
 	/* modify preview */
 	.content-container :global(.workspace-leaf) {
 		contain: initial !important;
+		height: 100%;
 	}
 	.content-container :global(.workspace-leaf-resize-handle) {
 		display: none;
@@ -281,8 +282,13 @@
 	.content-container :global(.view-header) {
 		display: none;
 	}
+	.content-container :global(.view-content) {
+		flex: 1;
+		overflow: hidden;
+	}
 	.content-container :global(.markdown-preview-view) {
 		padding: 0;
+		overflow: hidden;
 	}
 	.content-container :global(.modal-content) {
 		margin: 0;
