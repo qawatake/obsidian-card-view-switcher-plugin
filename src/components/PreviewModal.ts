@@ -156,7 +156,7 @@ export class PreviewModal extends Modal {
 			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
 				const internalLink = generateInternalLinkFrom(
-					this.app.metadataCache,
+					this.app,
 					this.file
 				);
 				navigator.clipboard.writeText(internalLink);
