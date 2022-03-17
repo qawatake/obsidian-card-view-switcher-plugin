@@ -16,6 +16,7 @@
 	import { convertHotkeyToText } from 'utils/Keymap';
 	import {
 		fuzzySearchInFilePaths,
+		pickRandomly,
 		searchInFiles,
 		sortResultItemsInFilePathSearch,
 		type FileSearchResultItem,
@@ -203,16 +204,24 @@
 			results = files.map((file) => {
 				return { file: file, name: null, path: null, content: null };
 			});
-		} else if (!query.startsWith("'")) {
-			const files = getRecentFiles($app);
-			const results = await searchInFiles($app, query, files);
-			return results;
-		} else {
+		} else if (query.startsWith("'")) {
 			const trimmedQuery = query.replace(/^'/, '');
 			const files = $app.vault.getFiles();
 			const results = sortResultItemsInFilePathSearch(
 				fuzzySearchInFilePaths(trimmedQuery, files)
 			);
+			return results;
+		} else if (query.startsWith(';')) {
+			const trimmedQuery = query.replace(/^;/, '');
+			const files = $app.vault.getFiles();
+			const results = pickRandomly(
+				fuzzySearchInFilePaths(trimmedQuery, files),
+				CARDS_PER_PAGE
+			);
+			return results;
+		} else {
+			const files = getRecentFiles($app);
+			const results = await searchInFiles($app, query, files);
 			return results;
 		}
 		return results;
