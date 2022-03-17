@@ -23,4 +23,5 @@ To switch to the normal search, prefix your search term with `'` or `Space`.
 Search by all file names and randomly choose 10 of them.
 To switch to the random search, prefix your search term with `;`.
 
-<!-- gif here -->
+![card-view-random-search-min (2)](https://user-images.githubusercontent.com/38106890/158729984-7c3385e1-e857-4533-a298-9fc5dff5a7b6.gif)
+
