@@ -91,7 +91,7 @@ export async function searchInFiles(
 
 export function pickRandomly<T>(array: T[], num: number): T[] {
 	for (let i = 0; i < num; i++) {
-		const j = Math.floor(Math.random() * (array.length + 1));
+		const j = Math.floor(Math.random() * array.length);
 		(array[i] = array[j] as T), (array[j] = array[i] as T);
 	}
 	return array.slice(0, num);
