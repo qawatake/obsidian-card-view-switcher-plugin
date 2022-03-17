@@ -5,8 +5,8 @@ Just execute command `Card View Switcher: Open switcher`.
 
 ![card-view-switcher-min](https://user-images.githubusercontent.com/38106890/153554839-aaa4b1d2-aebd-48f3-be1d-35e15841fdf5.gif)
 
-## Search Mode
-There are two search modes.
+## Search Modes
+There are three search modes.
 
 ### Recent Search
 Searches the contents and file names of the 10 most recently opened files.
