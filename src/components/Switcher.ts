@@ -116,7 +116,7 @@ export class Switcher extends Component {
 				const result = this.modal?.selectedResult();
 				if (!result) return;
 				const internalLink = generateInternalLinkFrom(
-					this.app.metadataCache,
+					this.app,
 					result.file
 				);
 				navigator.clipboard.writeText(internalLink);

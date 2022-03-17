@@ -16,6 +16,7 @@
 	import { convertHotkeyToText } from 'utils/Keymap';
 	import {
 		fuzzySearchInFilePaths,
+		pickRandomly,
 		searchInFiles,
 		sortResultItemsInFilePathSearch,
 		type FileSearchResultItem,
@@ -197,22 +198,32 @@
 
 	async function getResults(query: string): Promise<FileSearchResultItem[]> {
 		let results: FileSearchResultItem[];
+		const spaceTrimmedQuery = query.trimEnd();
 
-		if (query === '') {
+		if (spaceTrimmedQuery === '') {
 			const files = getRecentFiles($app);
 			results = files.map((file) => {
 				return { file: file, name: null, path: null, content: null };
 			});
-		} else if (!query.startsWith("'")) {
-			const files = getRecentFiles($app);
-			const results = await searchInFiles($app, query, files);
-			return results;
-		} else {
-			const trimmedQuery = query.replace(/^'/, '');
+		} else if (spaceTrimmedQuery.startsWith("'")) {
+			const trimmedQuery = spaceTrimmedQuery.replace(/^'/, '');
 			const files = $app.vault.getFiles();
 			const results = sortResultItemsInFilePathSearch(
 				fuzzySearchInFilePaths(trimmedQuery, files)
 			);
+			return results;
+		} else if (spaceTrimmedQuery.startsWith(';')) {
+			const trimmedQuery = spaceTrimmedQuery.replace(/^;/, '');
+			const files = $app.vault.getFiles();
+			const searchResults = fuzzySearchInFilePaths(trimmedQuery, files);
+			const results = pickRandomly(
+				searchResults,
+				Math.min(CARDS_PER_PAGE, searchResults.length)
+			);
+			return results;
+		} else {
+			const files = getRecentFiles($app);
+			const results = await searchInFiles($app, spaceTrimmedQuery, files);
 			return results;
 		}
 		return results;
