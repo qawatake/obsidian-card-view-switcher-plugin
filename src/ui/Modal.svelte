@@ -216,7 +216,6 @@
 			const trimmedQuery = spaceTrimmedQuery.replace(/^;/, '');
 			const files = $app.vault.getFiles();
 			const searchResults = fuzzySearchInFilePaths(trimmedQuery, files);
-			console.log(searchResults.length);
 			const results = pickRandomly(
 				searchResults,
 				Math.min(CARDS_PER_PAGE, searchResults.length)
