@@ -282,7 +282,7 @@ function getRecentFiles(app: App): TFile[] {
 }
 </script>
 
-<div class="modal">
+<div class="card-view-switcher-modal">
 	<div
 		class="modal-background"
 		on:click={() => {
@@ -315,7 +315,7 @@ function getRecentFiles(app: App): TFile[] {
 </div>
 
 <style>
-	.modal {
+	.card-view-switcher-modal {
 		display: flex;
 		align-items: center;
 		flex-direction: column;
