@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.4.3](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.2...0.4.3) - 2025-04-27
+- fix modal background height by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/21
+
 ## [0.4.2](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.1...0.4.2) - 2025-04-27
 - Dev environment update (tests, Biome, pnpm) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/19
 
