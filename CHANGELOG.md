@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.4.2](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.1...0.4.2) - 2025-04-27
+- Dev environment update (tests, Biome, pnpm) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/19
+
 ## [0.4.1](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.0...0.4.1) - 2025-04-27
 - Add random search by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/13
 - tagpr by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/17
