@@ -11,9 +11,8 @@
 		"lint": "biome check src",
 		"fix": "biome check --apply src",
 		"dev": "node esbuild.config.mjs",
-		"sass-build": "sass --no-source-map *.scss styles.css",
 		"esbuild": "node esbuild.config.mjs production",
-		"build": "pnpm esbuild && pnpm sass-build",
+		"build": "pnpm esbuild",
 		"e2e": "npm run build && playwright test"
 	},
 	"keywords": [],
