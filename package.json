@@ -6,10 +6,10 @@
 	"type": "module",
 	"scripts": {
 		"fix:format": "biome format --write src",
-		"lint:format": "biome format --check src",
-		"fix:lint": "biome lint --apply src",
+		"lint:format": "biome format src",
+		"fix:lint": "biome lint --write src",
 		"lint": "biome check src",
-		"fix": "biome check --apply src",
+		"fix": "biome check --write src",
 		"dev": "node esbuild.config.mjs",
 		"esbuild": "node esbuild.config.mjs production",
 		"build": "pnpm esbuild",
