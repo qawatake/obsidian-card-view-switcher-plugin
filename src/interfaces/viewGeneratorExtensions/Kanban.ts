@@ -30,7 +30,7 @@ export class KanbanViewGeneratorExtension implements ViewGeneratorExtension {
 
 	isMine(leaf: WorkspaceLeaf): boolean {
 		const { view } = leaf;
-		if (view.getViewType() == kanbanViewType) return true;
+		if (view.getViewType() === kanbanViewType) return true;
 		if (!(view instanceof TextFileView)) return false;
 		const fileCache = this.app.metadataCache.getFileCache(view.file);
 		const fileIsKanban =

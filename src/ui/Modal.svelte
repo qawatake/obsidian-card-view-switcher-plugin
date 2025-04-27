@@ -33,7 +33,7 @@ const instructions: (Instruction | undefined)[] =
 	CARD_VIEW_MODAL_HOTKEY_ACTION_IDS.map((actionId) => {
 		const hotkeys = $plugin.settings?.cardViewModalHotkeys[actionId];
 		if (!hotkeys) return undefined;
-		const purpose = "to " + HOTKEY_ACTION_INFO[actionId].short;
+		const purpose = `to ${HOTKEY_ACTION_INFO[actionId].short}`;
 		const cmd: string = hotkeys
 			.map((hotkey) => convertHotkeyToText(hotkey))
 			.join(", ");
@@ -175,7 +175,7 @@ function focusOn(id: number) {
 	[-1, 0, 1].forEach((i) => {
 		const card = cards[pos + i];
 		if (!card) return;
-		if (i == 0) {
+		if (i === 0) {
 			card.$set({ selected: true });
 		} else {
 			card.$set({ selected: false });

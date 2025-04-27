@@ -129,6 +129,7 @@ function renderFilePath(
 	class:is-selected={selected}
 	data-id={id}
 	data-path={file.path}
+	role="button"
 	on:click={onClicked}
 >
 	<div class="card-container-header">

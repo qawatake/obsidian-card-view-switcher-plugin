@@ -28,7 +28,7 @@ function deepClone<T>(obj: T): T {
 	if (obj === null) return obj;
 	if (typeof obj !== "object") return obj;
 
-	if (obj instanceof Array) {
+	if (Array.isArray(obj)) {
 		const clone = new Array(obj.length);
 		obj.forEach((value, id) => {
 			clone[id] = deepClone(value);
@@ -62,13 +62,13 @@ export function deepMerge<T>(a: T, b: T): T {
 		return deepClone(b);
 	}
 
-	if (b instanceof Array) {
-		if (a instanceof Array) {
+	if (Array.isArray(b)) {
+		if (Array.isArray(a)) {
 			return deepClone(b);
 		} else {
 			throw new Error(`failed to deepMerge ${a} and ${b}`);
 		}
-	} else if (a instanceof Array) {
+	} else if (Array.isArray(a)) {
 		throw new Error(`failed to deepMerge ${a} and ${b}`);
 	}
 
