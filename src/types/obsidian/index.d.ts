@@ -1,8 +1,8 @@
-import type { Plugin } from 'obsidian';
+import type { Plugin } from "obsidian";
 
-export * from 'obsidian';
+export * from "obsidian";
 
-declare module 'obsidian' {
+declare module "obsidian" {
 	interface App {
 		dom: AppDom;
 		plugins: { plugins: PluginMap };
@@ -36,7 +36,7 @@ declare module 'obsidian' {
 
 	interface WorkspaceSidedockTabParent {
 		children: WorkspaceLeaf[];
-		type: 'tabs';
+		type: "tabs";
 	}
 
 	interface WorkspaceSplit {

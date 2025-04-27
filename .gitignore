@@ -21,3 +21,10 @@ data.json
 
 # other
 .DS_Store
+
+# code for dev
+src/obsidiandev.ts
+.obsidian-unpacked
+test-results
+e2e-vault/.obsidian/plugins
+e2e-vault/.obsidian/workspace.json

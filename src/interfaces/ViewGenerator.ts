@@ -1,14 +1,14 @@
 import {
-	App,
+	type App,
 	type EditorRange,
 	MarkdownView,
 	type MarkdownViewModeType,
-	TFile,
-	WorkspaceLeaf,
-	type SearchMatches,
 	type SearchMatchPart,
-} from 'obsidian';
-import { delay, scrollIteration } from 'utils/Util';
+	type SearchMatches,
+	type TFile,
+	WorkspaceLeaf,
+} from "obsidian";
+import { delay, scrollIteration } from "utils/Util";
 
 export class ViewGenerator {
 	private readonly app: App;
@@ -46,7 +46,7 @@ export class ViewGenerator {
 		await this.openFile();
 		for (const ext of this.extensions) {
 			if (!(await ext.isMine(this.leaf))) continue;
-			await ext.setViewMode(this.leaf, mode ?? 'preview');
+			await ext.setViewMode(this.leaf, mode ?? "preview");
 			return;
 		}
 	}
@@ -76,7 +76,7 @@ export class ViewGenerator {
 			};
 			ranges.push(range);
 		});
-		editor.addHighlights(ranges, 'highlight-search-match');
+		editor.addHighlights(ranges, "highlight-search-match");
 	}
 
 	async scrollIntoView(match: SearchMatchPart, center?: boolean) {
@@ -84,7 +84,7 @@ export class ViewGenerator {
 		if (!(view instanceof MarkdownView)) {
 			return;
 		}
-		if (view.getMode() !== 'source') {
+		if (view.getMode() !== "source") {
 			return;
 		}
 		const editor = view.editor;
@@ -109,7 +109,7 @@ export class ViewGenerator {
 		if (!(view instanceof MarkdownView)) {
 			return;
 		}
-		if (view.getMode() !== 'source') {
+		if (view.getMode() !== "source") {
 			return;
 		}
 
@@ -117,12 +117,12 @@ export class ViewGenerator {
 
 		const { editor } = view;
 
-		editor.removeHighlights('focus-search-match');
+		editor.removeHighlights("focus-search-match");
 		const range = {
 			from: editor.offsetToPos(match[0]),
 			to: editor.offsetToPos(match[1]),
 		};
-		editor.addHighlights([range], 'focus-search-match');
+		editor.addHighlights([range], "focus-search-match");
 	}
 
 	registerExtension(ext: ViewGeneratorExtension): ViewGenerator {
@@ -136,30 +136,30 @@ export interface ViewGeneratorExtension {
 
 	setViewMode(
 		leaf: WorkspaceLeaf,
-		mode: MarkdownViewModeType
+		mode: MarkdownViewModeType,
 	): void | Promise<void>;
 	toggleViewMode(leaf: WorkspaceLeaf): void | Promise<void>;
 }
 
-const FILE_TYPES = ['md', 'image', 'audio', 'movie', 'pdf'] as const;
-type FileType = typeof FILE_TYPES[number];
+const FILE_TYPES = ["md", "image", "audio", "movie", "pdf"] as const;
+type FileType = (typeof FILE_TYPES)[number];
 export const fileTypeMap: { [extension: string]: FileType } = {
-	md: 'md',
-	png: 'image',
-	jpg: 'image',
-	jpeg: 'image',
-	gif: 'image',
-	bmp: 'image',
-	svg: 'image',
-	webp: 'image',
-	mp3: 'audio',
-	webm: 'audio',
-	wav: 'audio',
-	m4a: 'audio',
-	ogg: 'audio',
-	'3gp': 'audio',
-	flac: 'audio',
-	mp4: 'movie',
-	ogv: 'movie',
-	pdf: 'pdf',
+	md: "md",
+	png: "image",
+	jpg: "image",
+	jpeg: "image",
+	gif: "image",
+	bmp: "image",
+	svg: "image",
+	webp: "image",
+	mp3: "audio",
+	webm: "audio",
+	wav: "audio",
+	m4a: "audio",
+	ogg: "audio",
+	"3gp": "audio",
+	flac: "audio",
+	mp4: "movie",
+	ogv: "movie",
+	pdf: "pdf",
 };

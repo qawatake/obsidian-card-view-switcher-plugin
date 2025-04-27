@@ -1,19 +1,19 @@
+import type CardViewSwitcherPlugin from "main";
 import {
-	App,
-	Modal,
-	type SplitDirection,
+	type App,
 	MarkdownView,
+	Modal,
 	Notice,
-	TFile,
 	type SearchMatches,
-} from 'obsidian';
-import { scrollIteration } from 'utils/Util';
-import { generateInternalLinkFrom } from 'utils/Link';
-import type CardViewSwitcherPlugin from 'main';
-import type { Switcher } from './Switcher';
-import PreviewModalContent from 'ui/PreviewModalContent.svelte';
+	type SplitDirection,
+	type TFile,
+} from "obsidian";
+import PreviewModalContent from "ui/PreviewModalContent.svelte";
+import { generateInternalLinkFrom } from "utils/Link";
+import { scrollIteration } from "utils/Util";
+import type { Switcher } from "./Switcher";
 
-type ScrollDirection = 'up' | 'down';
+type ScrollDirection = "up" | "down";
 
 const SCROLL_AMOUNT = 70;
 
@@ -31,7 +31,7 @@ export class PreviewModal extends Modal {
 		plugin: CardViewSwitcherPlugin,
 		switcher: Switcher,
 		file: TFile,
-		matches: SearchMatches
+		matches: SearchMatches,
 	) {
 		super(app);
 		this.plugin = plugin;
@@ -68,7 +68,7 @@ export class PreviewModal extends Modal {
 		hotkeyMap.openInNewPaneHorizontally.forEach((hotkey) => {
 			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
-				this.openAndFocus(this.currentFocus, 'horizontal');
+				this.openAndFocus(this.currentFocus, "horizontal");
 				this.switcher.unload();
 				this.shouldRestoreSelection = false;
 				this.close();
@@ -78,7 +78,7 @@ export class PreviewModal extends Modal {
 		hotkeyMap.openInNewPaneVertically.forEach((hotkey) => {
 			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
-				this.openAndFocus(this.currentFocus, 'vertical');
+				this.openAndFocus(this.currentFocus, "vertical");
 				this.switcher.unload();
 				this.shouldRestoreSelection = false;
 				this.close();
@@ -88,28 +88,28 @@ export class PreviewModal extends Modal {
 		hotkeyMap.bigScrollDown.forEach((hotkey) => {
 			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
-				this.scroll('down');
+				this.scroll("down");
 			});
 		});
 
 		hotkeyMap.bigScrollUp.forEach((hotkey) => {
 			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
-				this.scroll('up');
+				this.scroll("up");
 			});
 		});
 
 		hotkeyMap.scrollDown.forEach((hotkey) => {
 			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
-				this.scroll('down', SCROLL_AMOUNT);
+				this.scroll("down", SCROLL_AMOUNT);
 			});
 		});
 
 		hotkeyMap.scrollUp.forEach((hotkey) => {
 			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
-				this.scroll('up', SCROLL_AMOUNT);
+				this.scroll("up", SCROLL_AMOUNT);
 			});
 		});
 
@@ -155,12 +155,9 @@ export class PreviewModal extends Modal {
 		hotkeyMap.copyLink.forEach((hotkey) => {
 			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
-				const internalLink = generateInternalLinkFrom(
-					this.app,
-					this.file
-				);
+				const internalLink = generateInternalLinkFrom(this.app, this.file);
 				navigator.clipboard.writeText(internalLink);
-				new Notice('Copy wiki link!');
+				new Notice("Copy wiki link!");
 			});
 		});
 	}
@@ -190,18 +187,14 @@ export class PreviewModal extends Modal {
 	private scroll(direction: ScrollDirection, px?: number) {
 		const { containerEl, contentEl } = this;
 		const move =
-			(px ?? containerEl.clientHeight / 2) *
-			(direction === 'up' ? -1 : 1);
+			(px ?? containerEl.clientHeight / 2) * (direction === "up" ? -1 : 1);
 		contentEl.scrollBy({
 			top: move,
-			behavior: 'smooth',
+			behavior: "smooth",
 		});
 	}
 
-	async openAndFocus(
-		matchId: number | undefined,
-		direction?: SplitDirection
-	) {
+	async openAndFocus(matchId: number | undefined, direction?: SplitDirection) {
 		const { file } = this;
 
 		// open file
@@ -229,7 +222,7 @@ export class PreviewModal extends Modal {
 			from: editor.offsetToPos(match[0]),
 			to: editor.offsetToPos(match[1]),
 		};
-		editor.addHighlights([range], 'obsidian-search-match-highlight');
+		editor.addHighlights([range], "obsidian-search-match-highlight");
 
 		// scroll
 		// if content of a file is too large, we need to call scrollIntoView many times

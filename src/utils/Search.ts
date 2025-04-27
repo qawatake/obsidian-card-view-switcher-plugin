@@ -1,10 +1,10 @@
 import {
-	App,
-	prepareFuzzySearch,
-	prepareSimpleSearch,
+	type App,
 	type SearchResult,
 	type TFile,
-} from 'obsidian';
+	prepareFuzzySearch,
+	prepareSimpleSearch,
+} from "obsidian";
 
 export interface FilePathSearchResultItem extends FileSearchResultItem {
 	file: TFile;
@@ -15,7 +15,7 @@ export interface FilePathSearchResultItem extends FileSearchResultItem {
 
 export function fuzzySearchInFilePaths(
 	query: string,
-	files: TFile[]
+	files: TFile[],
 ): FilePathSearchResultItem[] {
 	const fuzzy = prepareFuzzySearch(query);
 	return files
@@ -35,7 +35,7 @@ export function fuzzySearchInFilePaths(
 }
 
 export function sortResultItemsInFilePathSearch(
-	items: FilePathSearchResultItem[]
+	items: FilePathSearchResultItem[],
 ): FilePathSearchResultItem[] {
 	return items.sort((a, b) => {
 		if (a.name === null && b.name === null) {
@@ -66,7 +66,7 @@ export interface FileSearchResultItem {
 export async function searchInFiles(
 	app: App,
 	query: string,
-	files: TFile[]
+	files: TFile[],
 ): Promise<FileSearchResultItem[]> {
 	const search = prepareSimpleSearch(query);
 	const items: FileSearchResultItem[] = [];
@@ -74,9 +74,7 @@ export async function searchInFiles(
 		const inName = search(file.name);
 		const inPath = search(file.path);
 		const inContent =
-			file.extension === 'md'
-				? search(await app.vault.cachedRead(file))
-				: null;
+			file.extension === "md" ? search(await app.vault.cachedRead(file)) : null;
 		items.push({
 			file: file,
 			name: inName,
