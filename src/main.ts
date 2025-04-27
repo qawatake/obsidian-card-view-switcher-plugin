@@ -1,12 +1,12 @@
-import { Switcher } from 'components/Switcher';
-import { Plugin } from 'obsidian';
 import {
 	CardViewSwitcherSettingTab,
-	DEFAULT_SETTINGS,
 	type CardViewSwitcherSettings,
-} from 'Setting';
-import { deepMerge } from 'utils/Util';
-import * as store from 'ui/store';
+	DEFAULT_SETTINGS,
+} from "Setting";
+import { Switcher } from "components/Switcher";
+import { Plugin } from "obsidian";
+import * as store from "ui/store";
+import { deepMerge } from "utils/Util";
 
 export default class CardViewSwitcherPlugin extends Plugin {
 	settings: CardViewSwitcherSettings | undefined;
@@ -16,8 +16,8 @@ export default class CardViewSwitcherPlugin extends Plugin {
 		await this.loadSettings();
 
 		this.addCommand({
-			id: 'card-view-switcher:open',
-			name: 'Open switcher',
+			id: "card-view-switcher:open",
+			name: "Open switcher",
 			callback: () => {
 				this.renewSwitcher();
 			},

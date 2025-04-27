@@ -1,9 +1,9 @@
-import type CardViewSwitcherPlugin from 'main';
-import { App, Component, Notice, Scope, TFile } from 'obsidian';
-import Modal from 'ui/Modal.svelte';
-import { generateInternalLinkFrom } from 'utils/Link';
-import { PreviewModal } from './PreviewModal';
-import * as store from 'ui/store';
+import type CardViewSwitcherPlugin from "main";
+import { type App, Component, Notice, Scope, TFile } from "obsidian";
+import Modal from "ui/Modal.svelte";
+import * as store from "ui/store";
+import { generateInternalLinkFrom } from "utils/Link";
+import { PreviewModal } from "./PreviewModal";
 
 export class Switcher extends Component {
 	private readonly app: App;
@@ -52,7 +52,7 @@ export class Switcher extends Component {
 			target: document.body,
 		});
 
-		this.modal.$on('should-destroy', () => {
+		this.modal.$on("should-destroy", () => {
 			this.unload();
 		});
 	}
@@ -87,7 +87,7 @@ export class Switcher extends Component {
 						this.plugin,
 						this,
 						result.file,
-						result.content?.matches ?? []
+						result.content?.matches ?? [],
 					).open();
 				});
 			});
@@ -101,13 +101,13 @@ export class Switcher extends Component {
 		hotkeyMap.openInNewPaneHorizontally.forEach((hotkey) => {
 			this.scope?.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
-				this.modal?.open('horizontal');
+				this.modal?.open("horizontal");
 			});
 		});
 		hotkeyMap.openInNewPaneVertically.forEach((hotkey) => {
 			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
-				this.modal?.open('vertical');
+				this.modal?.open("vertical");
 			});
 		});
 		hotkeyMap.copyLink.forEach((hotkey) => {
@@ -115,15 +115,12 @@ export class Switcher extends Component {
 				evt.preventDefault();
 				const result = this.modal?.selectedResult();
 				if (!result) return;
-				const internalLink = generateInternalLinkFrom(
-					this.app,
-					result.file
-				);
+				const internalLink = generateInternalLinkFrom(this.app, result.file);
 				navigator.clipboard.writeText(internalLink);
-				new Notice('copy internal link!');
+				new Notice("copy internal link!");
 			});
 		});
-		this.scope?.register([], 'Escape', (evt) => {
+		this.scope?.register([], "Escape", (evt) => {
 			evt.preventDefault();
 			this.unload();
 		});

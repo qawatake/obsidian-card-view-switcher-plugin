@@ -1,7 +1,7 @@
-import type CardViewSwitcherPlugin from 'main';
-import { App, Notice, PluginSettingTab, type Hotkey } from 'obsidian';
-import { HotkeySetter } from 'ui/HotkeySetter';
-import { contain } from 'utils/Keymap';
+import type CardViewSwitcherPlugin from "main";
+import { type App, type Hotkey, Notice, PluginSettingTab } from "obsidian";
+import { HotkeySetter } from "ui/HotkeySetter";
+import { contain } from "utils/Keymap";
 
 export interface CardViewSwitcherSettings {
 	cardViewModalHotkeys: CardViewModalHotkeyMap;
@@ -23,35 +23,33 @@ export class CardViewSwitcherSettingTab extends PluginSettingTab {
 		const { settings } = this.plugin;
 		if (!settings) return;
 
-		containerEl.createEl('h2', { text: 'Hotkeys' });
+		containerEl.createEl("h2", { text: "Hotkeys" });
 
-		containerEl.createEl('h3', { text: 'Card View Modal' });
+		containerEl.createEl("h3", { text: "Card View Modal" });
 		CARD_VIEW_MODAL_HOTKEY_ACTION_IDS.forEach((actionId) => {
 			const hotkeys = settings.cardViewModalHotkeys[actionId];
-			const defaultHotkeys =
-				DEFAULT_SETTINGS.cardViewModalHotkeys[actionId];
+			const defaultHotkeys = DEFAULT_SETTINGS.cardViewModalHotkeys[actionId];
 			const description = HOTKEY_ACTION_INFO[actionId].description;
 			const hotkeySetter = new HotkeySetter(
 				this.app,
 				containerEl,
 				description,
 				hotkeys,
-				defaultHotkeys
+				defaultHotkeys,
 			).onChanged((renewed, added) => {
 				if (added) {
 					// modifier key should be pressed or it should be enter key
-					if (added.modifiers.length === 0 && added.key !== 'Enter')
+					if (added.modifiers.length === 0 && added.key !== "Enter")
 						return false;
 					// avoid collision
 					const collision = CARD_VIEW_MODAL_HOTKEY_ACTION_IDS.some(
 						(actionId) => {
-							const hotkeys =
-								settings.cardViewModalHotkeys[actionId];
+							const hotkeys = settings.cardViewModalHotkeys[actionId];
 							return contain(hotkeys, added);
-						}
+						},
 					);
 					if (collision) {
-						new Notice('Hotkeys are conflicting!');
+						new Notice("Hotkeys are conflicting!");
 						return false;
 					}
 				}
@@ -62,11 +60,10 @@ export class CardViewSwitcherSettingTab extends PluginSettingTab {
 			this.hotkeySetters.push(hotkeySetter);
 		});
 
-		containerEl.createEl('h3', { text: 'Preview Modal' });
+		containerEl.createEl("h3", { text: "Preview Modal" });
 		PREVIEW_MODAL_HOTKEY_ACTION_IDS.forEach((actionId) => {
 			const hotkeys = settings.previewModalHotkeys[actionId];
-			const defaultHotkeys =
-				DEFAULT_SETTINGS.previewModalHotkeys[actionId];
+			const defaultHotkeys = DEFAULT_SETTINGS.previewModalHotkeys[actionId];
 			const description =
 				PREVIEW_MODAL_HOTKEY_ACTION_INFO[actionId].description;
 			const hotkeySetter = new HotkeySetter(
@@ -74,19 +71,16 @@ export class CardViewSwitcherSettingTab extends PluginSettingTab {
 				containerEl,
 				description,
 				hotkeys,
-				defaultHotkeys
+				defaultHotkeys,
 			).onChanged((renewed, added) => {
 				if (added) {
 					// avoid collision
-					const collision = PREVIEW_MODAL_HOTKEY_ACTION_IDS.some(
-						(actionId) => {
-							const hotkeys =
-								settings.previewModalHotkeys[actionId];
-							return contain(hotkeys, added);
-						}
-					);
+					const collision = PREVIEW_MODAL_HOTKEY_ACTION_IDS.some((actionId) => {
+						const hotkeys = settings.previewModalHotkeys[actionId];
+						return contain(hotkeys, added);
+					});
 					if (collision) {
-						new Notice('Hotkeys are conflicting!');
+						new Notice("Hotkeys are conflicting!");
 						return false;
 					}
 				}
@@ -110,52 +104,52 @@ export const DEFAULT_SETTINGS: CardViewSwitcherSettings = {
 	cardViewModalHotkeys: {
 		selectNext: [
 			{
-				modifiers: ['Ctrl'],
-				key: 'n',
+				modifiers: ["Ctrl"],
+				key: "n",
 			},
 			{
 				modifiers: [],
-				key: 'ArrowDown',
+				key: "ArrowDown",
 			},
 		],
 		selectPrevious: [
 			{
-				modifiers: ['Ctrl'],
-				key: 'p',
+				modifiers: ["Ctrl"],
+				key: "p",
 			},
 			{
 				modifiers: [],
-				key: 'ArrowUp',
+				key: "ArrowUp",
 			},
 		],
 		openPreviewModal: [
 			{
-				modifiers: ['Ctrl'],
-				key: ' ',
+				modifiers: ["Ctrl"],
+				key: " ",
 			},
 		],
 		open: [
 			{
 				modifiers: [],
-				key: 'Enter',
+				key: "Enter",
 			},
 		],
 		openInNewPaneHorizontally: [
 			{
-				modifiers: ['Ctrl'],
-				key: 'Enter',
+				modifiers: ["Ctrl"],
+				key: "Enter",
 			},
 		],
 		openInNewPaneVertically: [
 			{
-				modifiers: ['Ctrl', 'Shift'],
-				key: 'Enter',
+				modifiers: ["Ctrl", "Shift"],
+				key: "Enter",
 			},
 		],
 		copyLink: [
 			{
-				modifiers: ['Ctrl'],
-				key: 'i',
+				modifiers: ["Ctrl"],
+				key: "i",
 			},
 		],
 	},
@@ -163,98 +157,98 @@ export const DEFAULT_SETTINGS: CardViewSwitcherSettings = {
 		scrollDown: [
 			{
 				modifiers: [],
-				key: 'ArrowDown',
+				key: "ArrowDown",
 			},
 			{
-				modifiers: ['Ctrl'],
-				key: 'n',
+				modifiers: ["Ctrl"],
+				key: "n",
 			},
 		],
 		scrollUp: [
 			{
 				modifiers: [],
-				key: 'ArrowUp',
+				key: "ArrowUp",
 			},
 			{
-				modifiers: ['Ctrl'],
-				key: 'p',
+				modifiers: ["Ctrl"],
+				key: "p",
 			},
 		],
 		bigScrollDown: [
 			{
 				modifiers: [],
-				key: ' ',
+				key: " ",
 			},
 		],
 		bigScrollUp: [
 			{
-				modifiers: ['Shift'],
-				key: ' ',
+				modifiers: ["Shift"],
+				key: " ",
 			},
 		],
 		open: [
 			{
 				modifiers: [],
-				key: 'Enter',
+				key: "Enter",
 			},
 		],
 		openInNewPaneHorizontally: [
 			{
-				modifiers: ['Ctrl'],
-				key: 'Enter',
+				modifiers: ["Ctrl"],
+				key: "Enter",
 			},
 		],
 		openInNewPaneVertically: [
 			{
-				modifiers: ['Ctrl', 'Shift'],
-				key: 'Enter',
+				modifiers: ["Ctrl", "Shift"],
+				key: "Enter",
 			},
 		],
 		closeModal: [
 			{
-				modifiers: ['Ctrl'],
-				key: ' ',
+				modifiers: ["Ctrl"],
+				key: " ",
 			},
 		],
 		focusNext: [
 			{
 				modifiers: [],
-				key: 'Tab',
+				key: "Tab",
 			},
 		],
 		focusPrevious: [
 			{
-				modifiers: ['Shift'],
-				key: 'Tab',
+				modifiers: ["Shift"],
+				key: "Tab",
 			},
 		],
 		toggleViewMode: [
 			{
-				modifiers: ['Ctrl'],
-				key: 'e',
+				modifiers: ["Ctrl"],
+				key: "e",
 			},
 		],
 		copyLink: [
 			{
-				modifiers: ['Ctrl'],
-				key: 'i',
+				modifiers: ["Ctrl"],
+				key: "i",
 			},
 		],
 	},
 };
 
 export const CARD_VIEW_MODAL_HOTKEY_ACTION_IDS = [
-	'selectNext',
-	'selectPrevious',
-	'openPreviewModal',
-	'open',
-	'openInNewPaneHorizontally',
-	'openInNewPaneVertically',
-	'copyLink',
+	"selectNext",
+	"selectPrevious",
+	"openPreviewModal",
+	"open",
+	"openInNewPaneHorizontally",
+	"openInNewPaneVertically",
+	"copyLink",
 ] as const;
 
 type CardViewModalHotkeyActionId =
-	typeof CARD_VIEW_MODAL_HOTKEY_ACTION_IDS[number];
+	(typeof CARD_VIEW_MODAL_HOTKEY_ACTION_IDS)[number];
 
 type CardViewModalHotkeyMap = {
 	[actionId in CardViewModalHotkeyActionId]: Hotkey[];
@@ -271,52 +265,52 @@ export const HOTKEY_ACTION_INFO: {
 	};
 } = {
 	selectNext: {
-		description: 'Select the next item',
-		short: 'select next',
+		description: "Select the next item",
+		short: "select next",
 	},
 	selectPrevious: {
-		description: 'Select the previous item',
-		short: 'select previous',
+		description: "Select the previous item",
+		short: "select previous",
 	},
 	openPreviewModal: {
-		description: 'Open preview modal',
-		short: 'preview',
+		description: "Open preview modal",
+		short: "preview",
 	},
 	open: {
-		description: 'Open the selected item',
-		short: 'open',
+		description: "Open the selected item",
+		short: "open",
 	},
 	openInNewPaneVertically: {
-		description: 'Open the selected item in a new pane vertically',
-		short: 'open vertically',
+		description: "Open the selected item in a new pane vertically",
+		short: "open vertically",
 	},
 	openInNewPaneHorizontally: {
-		description: 'Open the selected item in a new pane horizontally',
-		short: 'open horizontally',
+		description: "Open the selected item in a new pane horizontally",
+		short: "open horizontally",
 	},
 	copyLink: {
-		description: 'Copy the internal link of the selected item',
-		short: 'copy link',
+		description: "Copy the internal link of the selected item",
+		short: "copy link",
 	},
 };
 
 export const PREVIEW_MODAL_HOTKEY_ACTION_IDS = [
-	'scrollDown',
-	'scrollUp',
-	'bigScrollDown',
-	'bigScrollUp',
-	'open',
-	'openInNewPaneHorizontally',
-	'openInNewPaneVertically',
-	'closeModal',
-	'focusNext',
-	'focusPrevious',
-	'toggleViewMode',
-	'copyLink',
+	"scrollDown",
+	"scrollUp",
+	"bigScrollDown",
+	"bigScrollUp",
+	"open",
+	"openInNewPaneHorizontally",
+	"openInNewPaneVertically",
+	"closeModal",
+	"focusNext",
+	"focusPrevious",
+	"toggleViewMode",
+	"copyLink",
 ] as const;
 
 type PreviewModalHotkeyActionId =
-	typeof PREVIEW_MODAL_HOTKEY_ACTION_IDS[number];
+	(typeof PREVIEW_MODAL_HOTKEY_ACTION_IDS)[number];
 
 type PreviewModalHotkeyMap = {
 	[actionId in PreviewModalHotkeyActionId]: Hotkey[];
@@ -333,51 +327,51 @@ export const PREVIEW_MODAL_HOTKEY_ACTION_INFO: {
 	};
 } = {
 	scrollDown: {
-		description: 'Scroll down a bit',
-		short: 'scroll down',
+		description: "Scroll down a bit",
+		short: "scroll down",
 	},
 	scrollUp: {
-		description: 'Scroll up a bit',
-		short: 'scroll up',
+		description: "Scroll up a bit",
+		short: "scroll up",
 	},
 	bigScrollDown: {
-		description: 'Scroll down a lot',
-		short: 'scroll down',
+		description: "Scroll down a lot",
+		short: "scroll down",
 	},
 	bigScrollUp: {
-		description: 'Scroll up a lot',
-		short: 'scroll up',
+		description: "Scroll up a lot",
+		short: "scroll up",
 	},
 	open: {
-		description: 'Open the file',
-		short: 'open',
+		description: "Open the file",
+		short: "open",
 	},
 	openInNewPaneHorizontally: {
-		description: 'Open the file in a new pane horizontally',
-		short: 'open horizontally',
+		description: "Open the file in a new pane horizontally",
+		short: "open horizontally",
 	},
 	openInNewPaneVertically: {
-		description: 'Open the file in a new pane vertically',
-		short: 'open vertically',
+		description: "Open the file in a new pane vertically",
+		short: "open vertically",
 	},
 	closeModal: {
-		description: 'Close the modal',
-		short: 'close',
+		description: "Close the modal",
+		short: "close",
 	},
 	focusNext: {
-		description: 'Focus on the next match',
-		short: 'focus next',
+		description: "Focus on the next match",
+		short: "focus next",
 	},
 	focusPrevious: {
-		description: 'Focus on the previous match',
-		short: 'focus previous',
+		description: "Focus on the previous match",
+		short: "focus previous",
 	},
 	toggleViewMode: {
-		description: 'Toggle view mode',
-		short: 'change view',
+		description: "Toggle view mode",
+		short: "change view",
 	},
 	copyLink: {
-		description: 'Copy wiki link of the file',
-		short: 'copy link',
+		description: "Copy wiki link of the file",
+		short: "copy link",
 	},
 };

@@ -1,4 +1,4 @@
-import type { Editor } from 'obsidian';
+import type { Editor } from "obsidian";
 
 export async function delay(millisecond: number) {
 	await new Promise((resolve) => setTimeout(resolve, millisecond));
@@ -16,8 +16,8 @@ export function scrollIteration(editor: Editor): number | undefined {
 export function lineCount(editor: Editor): number | undefined {
 	// we shoud use ↓, but ↓ always return "1"
 	// return view.editor.lineCount();
-	const line = (editor as any)?.['cm']?.['state']?.['doc']?.length;
-	return typeof line === 'number' ? line : undefined;
+	const line = (editor as any)?.["cm"]?.["state"]?.["doc"]?.length;
+	return typeof line === "number" ? line : undefined;
 }
 
 function shallowClone<T>(obj: T): T {
@@ -26,7 +26,7 @@ function shallowClone<T>(obj: T): T {
 
 function deepClone<T>(obj: T): T {
 	if (obj === null) return obj;
-	if (typeof obj !== 'object') return obj;
+	if (typeof obj !== "object") return obj;
 
 	if (obj instanceof Array) {
 		const clone = new Array(obj.length);
@@ -55,7 +55,7 @@ export function deepMerge<T>(a: T, b: T): T {
 		throw new Error(`failed to deepMerge ${a} and ${b}`);
 	}
 
-	if (typeof b !== 'object') return deepClone(b);
+	if (typeof b !== "object") return deepClone(b);
 	if (b === null) {
 		return deepClone(a);
 	} else if (a === null) {

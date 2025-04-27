@@ -1,293 +1,285 @@
 <script lang="ts">
-	import {
-		App,
-		debounce,
-		TFile,
-		type Instruction,
-		type SplitDirection,
-	} from 'obsidian';
-	import {
-		CARD_VIEW_MODAL_HOTKEY_ACTION_IDS,
-		HOTKEY_ACTION_INFO,
-	} from 'Setting';
-	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
-	import CardContainer from 'ui/CardContainer.svelte';
-	import { app, plugin, switcher } from 'ui/store';
-	import { convertHotkeyToText } from 'utils/Keymap';
-	import {
-		fuzzySearchInFilePaths,
-		pickRandomly,
-		searchInFiles,
-		sortResultItemsInFilePathSearch,
-		type FileSearchResultItem,
-	} from 'utils/Search';
+import { CARD_VIEW_MODAL_HOTKEY_ACTION_IDS, HOTKEY_ACTION_INFO } from "Setting";
+import {
+	type App,
+	type Instruction,
+	type SplitDirection,
+	TFile,
+	debounce,
+} from "obsidian";
+import { createEventDispatcher, onDestroy, onMount } from "svelte";
+import CardContainer from "ui/CardContainer.svelte";
+import { app, plugin, switcher } from "ui/store";
+import { convertHotkeyToText } from "utils/Keymap";
+import {
+	type FileSearchResultItem,
+	fuzzySearchInFilePaths,
+	pickRandomly,
+	searchInFiles,
+	sortResultItemsInFilePathSearch,
+} from "utils/Search";
 
-	// const
-	const CARDS_PER_PAGE = 10;
-	// const instructions: Instruction[] = [
-	// 	{ command: '↑↓', purpose: 'to navigate' },
-	// 	{ command: 'ctrl + n/p', purpose: 'to navigate' },
-	// 	{ command: '↵', purpose: 'to open' },
-	// 	{ command: 'ctrl + ↵', purpose: 'to open horizontally' },
-	// 	{ command: 'ctrl + shift + ↵', purpose: 'to open vertically' },
-	// 	{ command: 'esc', purpose: 'to dismiss' },
-	// ];
-	const instructions: (Instruction | undefined)[] =
-		CARD_VIEW_MODAL_HOTKEY_ACTION_IDS.map((actionId) => {
-			const hotkeys = $plugin.settings?.cardViewModalHotkeys[actionId];
-			if (!hotkeys) return undefined;
-			const purpose = 'to ' + HOTKEY_ACTION_INFO[actionId].short;
-			const cmd: string = hotkeys
-				.map((hotkey) => convertHotkeyToText(hotkey))
-				.join(', ');
-			return {
-				command: cmd,
-				purpose: purpose,
-			};
-		});
-	instructions.push({
-		command: 'esc',
-		purpose: 'to dismiss',
+// const
+const CARDS_PER_PAGE = 10;
+// const instructions: Instruction[] = [
+// 	{ command: '↑↓', purpose: 'to navigate' },
+// 	{ command: 'ctrl + n/p', purpose: 'to navigate' },
+// 	{ command: '↵', purpose: 'to open' },
+// 	{ command: 'ctrl + ↵', purpose: 'to open horizontally' },
+// 	{ command: 'ctrl + shift + ↵', purpose: 'to open vertically' },
+// 	{ command: 'esc', purpose: 'to dismiss' },
+// ];
+const instructions: (Instruction | undefined)[] =
+	CARD_VIEW_MODAL_HOTKEY_ACTION_IDS.map((actionId) => {
+		const hotkeys = $plugin.settings?.cardViewModalHotkeys[actionId];
+		if (!hotkeys) return undefined;
+		const purpose = "to " + HOTKEY_ACTION_INFO[actionId].short;
+		const cmd: string = hotkeys
+			.map((hotkey) => convertHotkeyToText(hotkey))
+			.join(", ");
+		return {
+			command: cmd,
+			purpose: purpose,
+		};
 	});
+instructions.push({
+	command: "esc",
+	purpose: "to dismiss",
+});
 
-	// bind
-	// let containerEl: HTMLElement | undefined | null;
-	let inputEl: HTMLInputElement | undefined | null;
-	let contentEl: HTMLElement | undefined | null;
+// bind
+// let containerEl: HTMLElement | undefined | null;
+let inputEl: HTMLInputElement | undefined | null;
+let contentEl: HTMLElement | undefined | null;
 
-	// state variables
-	let results: FileSearchResultItem[];
-	let selected = 0;
-	let page = 0;
-	let cards: CardContainer[] = [];
-	// type SearchMode = 'normal' | 'recent';
-	// let mode: SearchMode = 'recent';
+// state variables
+let results: FileSearchResultItem[];
+let selected = 0;
+let page = 0;
+let cards: CardContainer[] = [];
+// type SearchMode = 'normal' | 'recent';
+// let mode: SearchMode = 'recent';
 
-	// debouncer
-	const searchAndRenderDebouncer = debounce(searchAndRender, 100, true);
+// debouncer
+const searchAndRenderDebouncer = debounce(searchAndRender, 100, true);
 
-	// event dispatcher
-	const dispatcher = createEventDispatcher();
+// event dispatcher
+const dispatcher = createEventDispatcher();
 
-	onMount(async () => {
-		inputEl?.focus();
+onMount(async () => {
+	inputEl?.focus();
 
-		results = await getResults('');
-		if (contentEl instanceof HTMLElement) {
-			renderCards(contentEl, results, 0);
-		}
-		focusOn(0);
-	});
+	results = await getResults("");
+	if (contentEl instanceof HTMLElement) {
+		renderCards(contentEl, results, 0);
+	}
+	focusOn(0);
+});
 
-	onDestroy(() => {
-		detachCards();
-	});
+onDestroy(() => {
+	detachCards();
+});
 
-	export function navigateForward() {
-		// update selected
-		let updated = true;
-		selected++;
+export function navigateForward() {
+	// update selected
+	let updated = true;
+	selected++;
 
-		if (selected >= results.length) {
-			selected = results.length - 1;
-			updated = false;
-		}
+	if (selected >= results.length) {
+		selected = results.length - 1;
+		updated = false;
+	}
 
-		focusOn(selected);
+	focusOn(selected);
 
-		// update page
-		if (updated) {
-			const shouldTransitNextPage = selected % CARDS_PER_PAGE === 0;
-			if (shouldTransitNextPage) {
-				page++;
-				if (contentEl instanceof HTMLElement) {
-					renderCards(contentEl, results, page);
-				}
-				focusOn(selected);
+	// update page
+	if (updated) {
+		const shouldTransitNextPage = selected % CARDS_PER_PAGE === 0;
+		if (shouldTransitNextPage) {
+			page++;
+			if (contentEl instanceof HTMLElement) {
+				renderCards(contentEl, results, page);
 			}
+			focusOn(selected);
 		}
 	}
+}
 
-	export function navigateBack() {
-		// update selected
-		let updated = true;
-		selected--;
-		if (selected < 0) {
-			selected = 0;
-			updated = false;
-		}
-
-		focusOn(selected);
-
-		// update page
-		if (updated) {
-			const shouldTransitPreviousPage =
-				(selected + 1) % CARDS_PER_PAGE === 0;
-			if (shouldTransitPreviousPage) {
-				page--;
-				if (contentEl instanceof HTMLElement) {
-					renderCards(contentEl, results, page);
-				}
-				focusOn(selected);
-			}
-		}
-	}
-
-	export async function open(direction?: SplitDirection) {
-		if (selected === undefined) {
-			return;
-		}
-		const file = results[selected]?.file;
-		if (file === undefined) {
-			return;
-		}
-		$switcher.shouldRestoreSelection = false;
-		await openFile(file, direction);
-		dispatcher('should-destroy');
-	}
-
-	export function selectedResult(): FileSearchResultItem | undefined {
-		const result = results[selected];
-		return result;
-	}
-
-	async function onInput(evt: Event) {
-		if (!(evt instanceof InputEvent)) return;
-		const inputEl = evt.target;
-		if (!(inputEl instanceof HTMLInputElement)) return;
-		const changed = changeMode(inputEl, evt);
-		if (changed) return;
-		searchAndRenderDebouncer(inputEl);
-	}
-
-	async function searchAndRender(inputEl: HTMLInputElement) {
-		// refresh
+export function navigateBack() {
+	// update selected
+	let updated = true;
+	selected--;
+	if (selected < 0) {
 		selected = 0;
-		page = 0;
-		detachCards();
-		// contentEl?.empty(); // unnecessary. rather cause error when used
-
-		results = await getResults(inputEl.value);
-		if (contentEl instanceof HTMLElement) {
-			renderCards(contentEl, results, 0);
-		}
-		focusOn(0);
+		updated = false;
 	}
 
-	function focusOn(id: number) {
-		const pos = id % CARDS_PER_PAGE; // id in results => position in cards
-		[-1, 0, 1].forEach((i) => {
-			const card = cards[pos + i];
-			if (!card) return;
-			if (i == 0) {
-				card.$set({ selected: true });
-			} else {
-				card.$set({ selected: false });
+	focusOn(selected);
+
+	// update page
+	if (updated) {
+		const shouldTransitPreviousPage = (selected + 1) % CARDS_PER_PAGE === 0;
+		if (shouldTransitPreviousPage) {
+			page--;
+			if (contentEl instanceof HTMLElement) {
+				renderCards(contentEl, results, page);
 			}
-		});
-	}
-
-	async function openFile(file: TFile, direction?: SplitDirection) {
-		const leaf =
-			direction !== undefined
-				? $app.workspace.splitActiveLeaf(direction)
-				: $app.workspace.getMostRecentLeaf();
-		await leaf.openFile(file);
-		$app.workspace.setActiveLeaf(leaf, true, true);
-	}
-
-	async function getResults(query: string): Promise<FileSearchResultItem[]> {
-		let results: FileSearchResultItem[];
-		const spaceTrimmedQuery = query.trimEnd();
-
-		if (spaceTrimmedQuery === '') {
-			const files = getRecentFiles($app);
-			results = files.map((file) => {
-				return { file: file, name: null, path: null, content: null };
-			});
-		} else if (spaceTrimmedQuery.startsWith("'")) {
-			const trimmedQuery = spaceTrimmedQuery.replace(/^'/, '');
-			const files = $app.vault.getFiles();
-			const results = sortResultItemsInFilePathSearch(
-				fuzzySearchInFilePaths(trimmedQuery, files)
-			);
-			return results;
-		} else if (spaceTrimmedQuery.startsWith(';')) {
-			const trimmedQuery = spaceTrimmedQuery.replace(/^;/, '');
-			const files = $app.vault.getFiles();
-			const searchResults = fuzzySearchInFilePaths(trimmedQuery, files);
-			const results = pickRandomly(
-				searchResults,
-				Math.min(CARDS_PER_PAGE, searchResults.length)
-			);
-			return results;
-		} else {
-			const files = getRecentFiles($app);
-			const results = await searchInFiles($app, spaceTrimmedQuery, files);
-			return results;
+			focusOn(selected);
 		}
+	}
+}
+
+export async function open(direction?: SplitDirection) {
+	if (selected === undefined) {
+		return;
+	}
+	const file = results[selected]?.file;
+	if (file === undefined) {
+		return;
+	}
+	$switcher.shouldRestoreSelection = false;
+	await openFile(file, direction);
+	dispatcher("should-destroy");
+}
+
+export function selectedResult(): FileSearchResultItem | undefined {
+	const result = results[selected];
+	return result;
+}
+
+async function onInput(evt: Event) {
+	if (!(evt instanceof InputEvent)) return;
+	const inputEl = evt.target;
+	if (!(inputEl instanceof HTMLInputElement)) return;
+	const changed = changeMode(inputEl, evt);
+	if (changed) return;
+	searchAndRenderDebouncer(inputEl);
+}
+
+async function searchAndRender(inputEl: HTMLInputElement) {
+	// refresh
+	selected = 0;
+	page = 0;
+	detachCards();
+	// contentEl?.empty(); // unnecessary. rather cause error when used
+
+	results = await getResults(inputEl.value);
+	if (contentEl instanceof HTMLElement) {
+		renderCards(contentEl, results, 0);
+	}
+	focusOn(0);
+}
+
+function focusOn(id: number) {
+	const pos = id % CARDS_PER_PAGE; // id in results => position in cards
+	[-1, 0, 1].forEach((i) => {
+		const card = cards[pos + i];
+		if (!card) return;
+		if (i == 0) {
+			card.$set({ selected: true });
+		} else {
+			card.$set({ selected: false });
+		}
+	});
+}
+
+async function openFile(file: TFile, direction?: SplitDirection) {
+	const leaf =
+		direction !== undefined
+			? $app.workspace.splitActiveLeaf(direction)
+			: $app.workspace.getMostRecentLeaf();
+	await leaf.openFile(file);
+	$app.workspace.setActiveLeaf(leaf, true, true);
+}
+
+async function getResults(query: string): Promise<FileSearchResultItem[]> {
+	let results: FileSearchResultItem[];
+	const spaceTrimmedQuery = query.trimEnd();
+
+	if (spaceTrimmedQuery === "") {
+		const files = getRecentFiles($app);
+		results = files.map((file) => {
+			return { file: file, name: null, path: null, content: null };
+		});
+	} else if (spaceTrimmedQuery.startsWith("'")) {
+		const trimmedQuery = spaceTrimmedQuery.replace(/^'/, "");
+		const files = $app.vault.getFiles();
+		const results = sortResultItemsInFilePathSearch(
+			fuzzySearchInFilePaths(trimmedQuery, files),
+		);
+		return results;
+	} else if (spaceTrimmedQuery.startsWith(";")) {
+		const trimmedQuery = spaceTrimmedQuery.replace(/^;/, "");
+		const files = $app.vault.getFiles();
+		const searchResults = fuzzySearchInFilePaths(trimmedQuery, files);
+		const results = pickRandomly(
+			searchResults,
+			Math.min(CARDS_PER_PAGE, searchResults.length),
+		);
+		return results;
+	} else {
+		const files = getRecentFiles($app);
+		const results = await searchInFiles($app, spaceTrimmedQuery, files);
 		return results;
 	}
+	return results;
+}
 
-	/**
-	 *
-	 * @returns whether mode change occurs
-	 */
-	function changeMode(inputEl: HTMLInputElement, evt: InputEvent): boolean {
-		if (evt.data === ' ' && inputEl.value === evt.data) {
-			evt.preventDefault();
-			inputEl.value = "'";
-			return true;
-		}
-		return false;
+/**
+ *
+ * @returns whether mode change occurs
+ */
+function changeMode(inputEl: HTMLInputElement, evt: InputEvent): boolean {
+	if (evt.data === " " && inputEl.value === evt.data) {
+		evt.preventDefault();
+		inputEl.value = "'";
+		return true;
 	}
+	return false;
+}
 
-	function renderCards(
-		contentEl: HTMLElement,
-		results: FileSearchResultItem[],
-		page: number
-	) {
-		// refresh
-		// contentEl.empty(); // unnecessary. rather cause error when used
-		detachCards();
+function renderCards(
+	contentEl: HTMLElement,
+	results: FileSearchResultItem[],
+	page: number,
+) {
+	// refresh
+	// contentEl.empty(); // unnecessary. rather cause error when used
+	detachCards();
 
-		for (
-			let id = CARDS_PER_PAGE * page;
-			id < CARDS_PER_PAGE * (page + 1);
-			id++
-		) {
-			const result = results[id];
-			if (!result) continue;
-			const card = new CardContainer({
-				target: contentEl,
-				props: {
-					id: id,
-					file: result.file,
-					matches: result?.path?.matches ?? [],
-					selected: false,
-					focusEl: inputEl,
-				},
-			});
-			card.$on('click', () => {
-				selected = id;
-				open();
-			});
-			cards.push(card);
-		}
+	for (let id = CARDS_PER_PAGE * page; id < CARDS_PER_PAGE * (page + 1); id++) {
+		const result = results[id];
+		if (!result) continue;
+		const card = new CardContainer({
+			target: contentEl,
+			props: {
+				id: id,
+				file: result.file,
+				matches: result?.path?.matches ?? [],
+				selected: false,
+				focusEl: inputEl,
+			},
+		});
+		card.$on("click", () => {
+			selected = id;
+			open();
+		});
+		cards.push(card);
 	}
+}
 
-	function detachCards() {
-		cards.forEach((card) => card.$destroy());
-		cards = [];
-	}
+function detachCards() {
+	cards.forEach((card) => card.$destroy());
+	cards = [];
+}
 
-	function getRecentFiles(app: App): TFile[] {
-		const files = app.workspace
-			.getLastOpenFiles()
-			.map((path) => app.vault.getAbstractFileByPath(path))
-			.filter((file) => file instanceof TFile) as TFile[];
-		return files;
-	}
+function getRecentFiles(app: App): TFile[] {
+	const files = app.workspace
+		.getLastOpenFiles()
+		.map((path) => app.vault.getAbstractFileByPath(path))
+		.filter((file) => file instanceof TFile) as TFile[];
+	return files;
+}
 </script>
 
 <div class="modal">
