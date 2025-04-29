@@ -7,7 +7,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const appPath = path.resolve("./.obsidian-unpacked/main.js");
-const vaultPath = path.resolve("./e2e-vault");
+const vaultPath = path.resolve("./tests/test-vault");
 
 let app: ElectronApplication;
 

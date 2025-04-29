@@ -2,7 +2,6 @@ import { defineConfig, devices } from "@playwright/test";
 
 // See https://playwright.dev/docs/test-configuration.
 export default defineConfig({
-	testDir: "./e2e",
 	fullyParallel: false,
 	forbidOnly: !!process.env["CI"],
 	use: {
@@ -10,8 +9,13 @@ export default defineConfig({
 	},
 	projects: [
 		{
-			name: "obsidian",
-			use: { ...devices["Desktop Chrome"] },
+			name: "e2e",
+			testDir: "./tests/e2e",
+		},
+		{
+			name: "e2e-setup",
+			testDir: "./tests/e2e-setup",
+			testMatch: "**/*.ts",
 		},
 	],
 	timeout: 300 * 1000,

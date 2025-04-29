@@ -13,7 +13,9 @@
 		"dev": "node esbuild.config.mjs",
 		"esbuild": "node esbuild.config.mjs production",
 		"build": "pnpm esbuild",
-		"e2e": "npm run build && playwright test"
+		"e2e:setup": "npx playwright test tests/e2e-setup/setup.ts --project e2e-setup",
+		"e2e:cleanup": "playwright test tests/e2e-setup/cleanup.ts --project e2e-setup",
+		"e2e": "npm run build && playwright test --project e2e"
 	},
 	"keywords": [],
 	"author": "",
