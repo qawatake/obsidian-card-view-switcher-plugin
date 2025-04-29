@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.4](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.3...0.4.4) - 2025-04-29
+- Run E2E on CI by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/23
+- dependabot by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/25
+- Bump softprops/action-gh-release from 1 to 2 by @dependabot in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/27
+
 ## [0.4.3](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.2...0.4.3) - 2025-04-27
 - fix modal background height by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/21
 
