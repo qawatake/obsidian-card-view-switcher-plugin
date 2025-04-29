@@ -26,5 +26,5 @@ data.json
 src/obsidiandev.ts
 .obsidian-unpacked
 test-results
-e2e-vault/.obsidian/plugins
-e2e-vault/.obsidian/workspace.json
+tests/test-vault/.obsidian/plugins/
+tests/test-vault/.obsidian/workspace.json
