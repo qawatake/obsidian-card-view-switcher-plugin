@@ -1,5 +1,7 @@
 # Card View Switcher
 
+[![ci](https://github.com/qawatake/obsidian-card-view-switcher-plugin/actions/workflows/ci.yml/badge.svg?event=schedule)](https://github.com/qawatake/obsidian-card-view-switcher-plugin/actions/workflows/ci.yml)
+
 This plugin provides a quick switcher with card view.
 Just execute command `Card View Switcher: Open switcher`.
 
