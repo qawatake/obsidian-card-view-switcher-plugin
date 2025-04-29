@@ -32,7 +32,7 @@ jobs:
       - name: Build
         run: npm run build
       - name: Upload build artifact to release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: |
             main.js
