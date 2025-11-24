@@ -9,7 +9,7 @@ jobs:
     outputs:
       tagpr-tag: ${{ steps.tagpr.outputs.tag }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - id: tagpr
@@ -21,7 +21,7 @@ jobs:
     if: needs.tagpr.outputs.tagpr-tag != ''
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: jdx/mise-action@v2
         with:
           version: 2024.11.3
