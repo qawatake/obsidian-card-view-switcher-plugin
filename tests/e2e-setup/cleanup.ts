@@ -33,23 +33,32 @@ test.afterEach(async () => {
 test("Unregister test vault", async () => {
 	let window = await app.firstWindow();
 
-	// Execute the "Open another vault" command
-	{
-		// Open the command palette
-		await window
-			.getByLabel("Open command palette", { exact: true })
-			.click();
-
-		// Input to the command palette
-		const commandPalette = window.locator(":focus");
-		await commandPalette.fill("open another vault");
-		await commandPalette.press("Enter");
-	}
-
-	// Wait for the new window to open
-	window = await app.waitForEvent("window", (w) =>
-		w.url().includes("starter")
+	// Open the vault chooser. The command is executed by its stable id
+	// because its palette name changed across Obsidian versions
+	// ("Open another vault" -> "Manage vaults...").
+	// Wait until the command is registered; the commands registry exists
+	// before individual commands are added during workspace init.
+	await window.waitForFunction(
+		() =>
+			// @ts-expect-error app is a global in the Obsidian renderer
+			window.app?.commands?.findCommand?.("app:open-vault") != null,
 	);
+	const executed = await window.evaluate(() => {
+		// @ts-expect-error app is a global in the Obsidian renderer
+		return window.app.commands.executeCommandById("app:open-vault");
+	});
+	expect(executed, "app:open-vault command should exist").toBe(true);
+
+	// Wait for the vault chooser window. Polling app.windows() instead of
+	// waitForEvent("window") avoids the race where the window opens before
+	// the event listener is registered. On failure the assertion message
+	// shows the URLs of all windows that actually exist.
+	await expect
+		.poll(() => JSON.stringify(app.windows().map((w) => w.url())), {
+			timeout: 30000,
+		})
+		.toContain("starter");
+	window = app.windows().find((w) => w.url().includes("starter"))!;
 
 	// Close the originally opened window
 	{
