@@ -43,10 +43,13 @@ test("Unregister test vault", async () => {
 		window.app.commands.executeCommandById("app:open-vault");
 	});
 
-	// Wait for the new window to open
-	window = await app.waitForEvent("window", (w) =>
-		w.url().includes("starter")
-	);
+	// Wait for the vault chooser window. Polling app.windows() instead of
+	// waitForEvent("window") avoids the race where the window opens before
+	// the event listener is registered.
+	await expect
+		.poll(() => app.windows().some((w) => w.url().includes("starter")))
+		.toBe(true);
+	window = app.windows().find((w) => w.url().includes("starter"))!;
 
 	// Close the originally opened window
 	{
