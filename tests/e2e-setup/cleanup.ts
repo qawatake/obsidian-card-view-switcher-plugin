@@ -36,6 +36,8 @@ test("Unregister test vault", async () => {
 	// Open the vault chooser. The command is executed by its stable id
 	// because its palette name changed across Obsidian versions
 	// ("Open another vault" -> "Manage vaults...").
+	// @ts-expect-error app is a global in the Obsidian renderer
+	await window.waitForFunction(() => window.app?.commands != null);
 	await window.evaluate(() => {
 		// @ts-expect-error app is a global in the Obsidian renderer
 		window.app.commands.executeCommandById("app:open-vault");
