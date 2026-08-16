@@ -24,10 +24,30 @@ test.beforeEach(async () => {
 			`obsidian://open?path=${encodeURIComponent(vaultPath)}`,
 		],
 	});
+
+	// Handle JS dialogs (e.g. beforeunload on app close) explicitly.
+	// Playwright's implicit auto-dismiss races with Obsidian closing its own
+	// dialogs ("No dialog is showing" protocol error), which hangs teardown.
+	const handleDialogs = (page) => {
+		page.on("dialog", (dialog) => dialog.accept().catch(() => {}));
+	};
+	app.on("window", handleDialogs);
+	for (const page of app.windows()) {
+		handleDialogs(page);
+	}
 });
 
 test.afterEach(async () => {
-	await app?.close();
+	if (!app) return;
+	// app.close() can hang if Obsidian blocks shutdown, so bound it and
+	// force-kill as a fallback. The process handle must be grabbed before
+	// close(): a disposed ElectronApplication throws from process().
+	const obsidianProcess = app.process();
+	await Promise.race([
+		app.close(),
+		new Promise((resolve) => setTimeout(resolve, 15_000)),
+	]);
+	obsidianProcess.kill();
 });
 
 test("Unregister test vault", async () => {
