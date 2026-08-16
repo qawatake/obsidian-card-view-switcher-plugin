@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.4.4](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.3...0.4.4) - 2026-08-16
+
+- Run E2E on CI by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/23
+- dependabot by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/25
+- Bump softprops/action-gh-release from 1 to 2 by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/27
+- Bump the npm-minor-patch group with 4 updates by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/28
+- Bump dev dependencies to resolve Dependabot alerts by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/35
+- Migrate to Svelte 5 (compatibility component API) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/37
+- Fix e2e cleanup against current Obsidian (fixes #38) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/39
+
 ## [0.4.3](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.2...0.4.3) - 2025-04-27
 - fix modal background height by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/21
 
