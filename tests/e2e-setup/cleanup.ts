@@ -38,17 +38,21 @@ test("Unregister test vault", async () => {
 	// ("Open another vault" -> "Manage vaults...").
 	// @ts-expect-error app is a global in the Obsidian renderer
 	await window.waitForFunction(() => window.app?.commands != null);
-	await window.evaluate(() => {
+	const executed = await window.evaluate(() => {
 		// @ts-expect-error app is a global in the Obsidian renderer
-		window.app.commands.executeCommandById("app:open-vault");
+		return window.app.commands.executeCommandById("app:open-vault");
 	});
+	expect(executed, "app:open-vault command should exist").toBe(true);
 
 	// Wait for the vault chooser window. Polling app.windows() instead of
 	// waitForEvent("window") avoids the race where the window opens before
-	// the event listener is registered.
+	// the event listener is registered. On failure the assertion message
+	// shows the URLs of all windows that actually exist.
 	await expect
-		.poll(() => app.windows().some((w) => w.url().includes("starter")))
-		.toBe(true);
+		.poll(() => JSON.stringify(app.windows().map((w) => w.url())), {
+			timeout: 30000,
+		})
+		.toContain("starter");
 	window = app.windows().find((w) => w.url().includes("starter"))!;
 
 	// Close the originally opened window
