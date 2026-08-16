@@ -33,18 +33,13 @@ test.afterEach(async () => {
 test("Unregister test vault", async () => {
 	let window = await app.firstWindow();
 
-	// Execute the "Open another vault" command
-	{
-		// Open the command palette
-		await window
-			.getByLabel("Open command palette", { exact: true })
-			.click();
-
-		// Input to the command palette
-		const commandPalette = window.locator(":focus");
-		await commandPalette.fill("open another vault");
-		await commandPalette.press("Enter");
-	}
+	// Open the vault chooser. The command is executed by its stable id
+	// because its palette name changed across Obsidian versions
+	// ("Open another vault" -> "Manage vaults...").
+	await window.evaluate(() => {
+		// @ts-expect-error app is a global in the Obsidian renderer
+		window.app.commands.executeCommandById("app:open-vault");
+	});
 
 	// Wait for the new window to open
 	window = await app.waitForEvent("window", (w) =>
