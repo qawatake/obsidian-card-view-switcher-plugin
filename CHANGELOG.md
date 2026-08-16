@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.5](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.4...0.4.5) - 2026-08-16
+
+- Revert Svelte 5 migration (broken card view rendering) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/40
+- Reinstate Svelte 5 migration by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/43
+
 ## [0.4.4](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.3...0.4.4) - 2026-08-16
 
 - Run E2E on CI by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/23
