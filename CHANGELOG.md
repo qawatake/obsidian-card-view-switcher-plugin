@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.6](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.5...0.4.6) - 2026-08-22
+
+- Stabilize e2e teardown against the latest Obsidian by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/44
+- e2e: download the newest Obsidian release that ships a dmg by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/48
+- ci: declare least-privilege GITHUB_TOKEN permissions by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/46
+- ci: build release with pnpm --frozen-lockfile by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/47
+
 ## [0.4.5](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.4...0.4.5) - 2026-08-16
 
 - Revert Svelte 5 migration (broken card view rendering) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/40
