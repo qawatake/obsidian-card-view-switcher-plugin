@@ -27,7 +27,7 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v3
         with:
           version: 2024.11.3
           install: true
