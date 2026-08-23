@@ -1,9 +1,9 @@
 import {
 	type App,
-	type SearchResult,
-	type TFile,
 	prepareFuzzySearch,
 	prepareSimpleSearch,
+	type SearchResult,
+	type TFile,
 } from "obsidian";
 
 export interface FilePathSearchResultItem extends FileSearchResultItem {

@@ -3,8 +3,8 @@ import {
 	type EditorRange,
 	MarkdownView,
 	type MarkdownViewModeType,
-	type SearchMatchPart,
 	type SearchMatches,
+	type SearchMatchPart,
 	type TFile,
 	WorkspaceLeaf,
 } from "obsidian";
@@ -56,8 +56,9 @@ export class ViewGenerator {
 	}
 
 	private async openFile() {
-		const { leaf, file } = this;
-		await leaf.openFile(file);
+		// Not destructured from `this`: Biome's noUnusedPrivateClassMembers
+		// does not see through `const { file } = this`.
+		await this.leaf.openFile(this.file);
 	}
 
 	// it should be called once because is is not idempotent
