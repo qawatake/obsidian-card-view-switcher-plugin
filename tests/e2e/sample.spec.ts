@@ -1,6 +1,8 @@
 import test, {
 	expect,
 	type ElectronApplication,
+	type Locator,
+	type Page,
 	_electron as electron,
 } from "@playwright/test";
 import fs from "node:fs/promises";
@@ -10,6 +12,44 @@ const appPath = path.resolve("./.obsidian-unpacked/main.js");
 const vaultPath = path.resolve("./tests/test-vault");
 
 let app: ElectronApplication;
+
+/**
+ * Click `target`, first dismissing any confirmation modal Obsidian may have
+ * opened on startup. In CI a `.modal-container.mod-confirmation` sometimes
+ * appears right after launch and swallows the first click (flaky timeout).
+ * The trust prompt must be accepted, anything else is closed with Escape.
+ * The modal text is logged so the cause is visible in the CI log.
+ */
+async function clickPastStartupModals(window: Page, target: Locator) {
+	const attempts = 10;
+	for (let i = 0; i < attempts; i++) {
+		const modal = window.locator(".modal-container");
+		if ((await modal.count()) > 0) {
+			const text = (await modal.first().innerText())
+				.replace(/\s+/g, " ")
+				.slice(0, 200);
+			console.log(`[e2e] modal open at startup, dismissing: ${text}`);
+			const trust = modal.getByRole("button", {
+				name: "Trust author and enable plugins",
+			});
+			if ((await trust.count()) > 0) {
+				await trust.click();
+			} else {
+				await window.keyboard.press("Escape");
+			}
+			await modal
+				.first()
+				.waitFor({ state: "detached", timeout: 5_000 })
+				.catch(() => {});
+		}
+		try {
+			await target.click({ timeout: 3_000 });
+			return;
+		} catch (e) {
+			if (i === attempts - 1) throw e;
+		}
+	}
+}
 
 test.beforeEach(async () => {
 	await fs.rm(path.join(vaultPath, ".obsidian", "workspace.json"), {
@@ -55,7 +95,10 @@ test("最近2番目に開いたファイルが含まれる", async () => {
 	// ファイルhogeを開く
 	{
 		// Quick switcherを開く
-		await window.getByLabel("Open quick switcher", { exact: true }).click();
+		await clickPastStartupModals(
+			window,
+			window.getByLabel("Open quick switcher", { exact: true }),
+		);
 		const quickSwitcher = window.locator(":focus");
 		// Quick switcherに入力
 		await quickSwitcher.fill("hoge");
