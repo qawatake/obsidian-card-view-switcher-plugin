@@ -2,10 +2,10 @@
 import { CARD_VIEW_MODAL_HOTKEY_ACTION_IDS, HOTKEY_ACTION_INFO } from "Setting";
 import {
 	type App,
+	debounce,
 	type Instruction,
 	type SplitDirection,
 	TFile,
-	debounce,
 } from "obsidian";
 import { createEventDispatcher, onDestroy, onMount } from "svelte";
 import CardContainer from "ui/CardContainer.svelte";
@@ -269,7 +269,9 @@ function renderCards(
 }
 
 function detachCards() {
-	cards.forEach((card) => card.$destroy());
+	cards.forEach((card) => {
+		card.$destroy();
+	});
 	cards = [];
 }
 

@@ -94,7 +94,9 @@ export class CardViewSwitcherSettingTab extends PluginSettingTab {
 
 	override hide() {
 		super.hide();
-		this.hotkeySetters.forEach((s) => s.unload());
+		this.hotkeySetters.forEach((s) => {
+			s.unload();
+		});
 		this.hotkeySetters = [];
 		this.containerEl.empty();
 	}

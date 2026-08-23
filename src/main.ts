@@ -1,6 +1,6 @@
 import {
-	CardViewSwitcherSettingTab,
 	type CardViewSwitcherSettings,
+	CardViewSwitcherSettingTab,
 	DEFAULT_SETTINGS,
 } from "Setting";
 import { Switcher } from "components/Switcher";
