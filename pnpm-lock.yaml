@@ -9,7 +9,7 @@ importers:
   .:
     devDependencies:
       '@biomejs/biome':
-        specifier: ^2.5.8
+        specifier: 2.5.8
         version: 2.5.8
       '@electron/asar':
         specifier: 4.2.1

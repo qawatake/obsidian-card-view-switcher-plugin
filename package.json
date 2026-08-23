@@ -25,13 +25,8 @@
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {
-<<<<<<< HEAD
 		"@biomejs/biome": "2.5.8",
-		"@electron/asar": "^3.4.1",
-=======
-		"@biomejs/biome": "^1.9.4",
 		"@electron/asar": "4.2.1",
->>>>>>> origin/main
 		"@playwright/test": "^1.59.1",
 		"@tsconfig/svelte": "^5.0.8",
 		"@types/node": "24.13.3",
