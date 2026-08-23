@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.4.6](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.5...0.4.6) - 2026-08-23
+
+### Changes
+- Stabilize e2e teardown against the latest Obsidian by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/44
+- e2e: download the newest Obsidian release that ships a dmg by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/48
+- ci: declare least-privilege GITHUB_TOKEN permissions by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/46
+- ci: build release with pnpm --frozen-lockfile by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/47
+- ci: pin GitHub Actions to commit SHAs with pinact by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/49
+- ci: run on pull_request/push and weekly schedule by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/50
+- e2e: survive a confirmation modal at startup; disable auto-update in CI by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/51
+- build: harden pnpm settings (minimum-release-age, exact pins, pinned pnpm) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/52
+- ci: add a 7-day cooldown to Dependabot updates by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/53
+- build: move to Node 24 (current Active LTS) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/54
+- ci: bump pinned mise to 2026.8.3 by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/55
+- deps: update build-time dependencies to current majors by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/56
+- ci: stop Dependabot proposing majors we pin on purpose by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/57
+- build: upgrade Biome 1.9 -> 2.5 and clear new lint findings by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/58
+- ci: run lint in CI (and build on every PR) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/59
+- ci: generate GitHub release notes on release by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/60
+
 ## [0.4.5](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.4...0.4.5) - 2026-08-16
 
 - Revert Svelte 5 migration (broken card view rendering) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/40
