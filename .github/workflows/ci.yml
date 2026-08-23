@@ -21,7 +21,8 @@ jobs:
           version: 2026.8.3
           install: true
           cache: true
-      - run: pnpm install
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
       - run: pnpm build
 
   e2e:
@@ -33,7 +34,7 @@ jobs:
           version: 2026.8.3
           install: true
           cache: true
-      - run: pnpm install
+      - run: pnpm install --frozen-lockfile
       - run: ./scripts/setup-obsidian.sh --ci
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,7 +50,7 @@ jobs:
           version: 2026.8.3
           install: true
           cache: true
-      - run: pnpm install
+      - run: pnpm install --frozen-lockfile
       - run: ./scripts/setup-obsidian.sh --ci
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
