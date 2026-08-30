@@ -18,7 +18,7 @@ export class CardViewSwitcherSettingTab extends PluginSettingTab {
 		this.hotkeySetters = [];
 	}
 
-	display() {
+	override display() {
 		const { containerEl } = this;
 		const { settings } = this.plugin;
 		if (!settings) return;

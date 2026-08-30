@@ -9,7 +9,7 @@ import * as store from "ui/store";
 import { deepMerge } from "utils/Util";
 
 export default class CardViewSwitcherPlugin extends Plugin {
-	settings: CardViewSwitcherSettings | undefined;
+	override settings: CardViewSwitcherSettings | undefined;
 	private switcher: Switcher | undefined;
 
 	override async onload() {
