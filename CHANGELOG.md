@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.7](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.6...0.4.7) - 2026-08-30
+
+### Changes
+- ci: tier Dependabot cooldown by semver level by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/61
+- build: bump electron to 43.3.0 (matches Obsidian 1.13.7) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/63
+- ci: let Dependabot bump electron majors; warn on drift from Obsidian's Electron by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/64
+- chore: sync dev-environment improvements from core-search-assistant by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/65
+
 ## [0.4.6](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.5...0.4.6) - 2026-08-23
 
 ### Changes
