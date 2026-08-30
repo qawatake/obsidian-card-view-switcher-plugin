@@ -3,4 +3,3 @@ onlyBuiltDependencies:
   - '@parcel/watcher'
   - electron
   - esbuild
-  - svelte-preprocess

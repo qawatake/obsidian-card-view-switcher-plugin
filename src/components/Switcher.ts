@@ -67,20 +67,20 @@ export class Switcher extends Component {
 		hotkeyMap.selectPrevious.forEach((hotkey) => {
 			this.scope?.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault(); // to prevent cursor from moving to the start position
-				this.modal?.navigateBack();
+				this.modal?.["navigateBack"]();
 			});
 		});
 		hotkeyMap.selectNext.forEach((hotkey) => {
 			this.scope?.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault(); // to prevent cursor from moving to the end position
-				this.modal?.navigateForward();
+				this.modal?.["navigateForward"]();
 			});
 		});
 		if (!this.app.vault.config.legacyEditor) {
 			hotkeyMap.openPreviewModal.forEach((hotkey) => {
 				this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
 					evt.preventDefault();
-					const result = this.modal?.selectedResult();
+					const result = this.modal?.["selectedResult"]();
 					if (result === undefined) return;
 					new PreviewModal(
 						this.app,
@@ -95,25 +95,25 @@ export class Switcher extends Component {
 		hotkeyMap.open.forEach((hotkey) => {
 			this.scope?.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
-				this.modal?.open();
+				this.modal?.["open"]();
 			});
 		});
 		hotkeyMap.openInNewPaneHorizontally.forEach((hotkey) => {
 			this.scope?.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
-				this.modal?.open("horizontal");
+				this.modal?.["open"]("horizontal");
 			});
 		});
 		hotkeyMap.openInNewPaneVertically.forEach((hotkey) => {
 			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
-				this.modal?.open("vertical");
+				this.modal?.["open"]("vertical");
 			});
 		});
 		hotkeyMap.copyLink.forEach((hotkey) => {
 			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
-				const result = this.modal?.selectedResult();
+				const result = this.modal?.["selectedResult"]();
 				if (!result) return;
 				const internalLink = generateInternalLinkFrom(this.app, result.file);
 				navigator.clipboard.writeText(internalLink);
