@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.4.7](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.6...0.4.7) - 2026-09-12
+
+### Changes
+- ci: tier Dependabot cooldown by semver level by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/61
+- build: bump electron to 43.3.0 (matches Obsidian 1.13.7) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/63
+- ci: let Dependabot bump electron majors; warn on drift from Obsidian's Electron by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/64
+- chore: sync dev-environment improvements from core-search-assistant by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/65
+- chore: schedule Dependabot on Saturday 03:00 JST by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/66
+- chore: use flat 7-day cooldown for github-actions by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/67
+- Tighten Dependabot and CI supply-chain policy by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/68
+- Check that config $schema versions match package.json by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/69
+- Align check-config-schema.mjs imports with Biome's order by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/70
+- Pin dependency ranges to the resolved versions by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/71
+
 ## [0.4.6](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.5...0.4.6) - 2026-08-23
 
 ### Changes
