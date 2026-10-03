@@ -45,6 +45,8 @@ jobs:
             main.js
             manifest.json
             styles.css
+          # Fail instead of warn when a listed file is missing, so a release without main.js etc. is never published.
+          fail_on_unmatched_files: true
           tag_name: ${{ needs.tagpr.outputs.tagpr-tag }}
           # GitHub-generated notes: merged PRs by category (.github/release.yml), contributors, compare link.
           generate_release_notes: true
