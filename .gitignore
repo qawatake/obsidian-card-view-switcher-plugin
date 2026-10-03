@@ -28,3 +28,6 @@ src/obsidiandev.ts
 test-results
 tests/test-vault/.obsidian/plugins/
 tests/test-vault/.obsidian/workspace.json
+
+# esbuild metafile written by `pnpm build`, read by scripts/check-bundled-deps.mjs
+meta.json
