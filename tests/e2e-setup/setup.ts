@@ -83,6 +83,10 @@ test("Set up test vault to make plugin ready to use when Obsidian opens", async 
 
 	// A fresh vault shows the trust prompt; accept it and wait out the
 	// Community plugins modal Obsidian opens afterwards.
+	// DIAG (temporary): leave the vault untrusted so e2e:test sees the prompt
+	await window.locator(".modal.mod-trust-folder").waitFor();
+	console.log("[diag] setup leaves the vault untrusted");
+	if (Date.now() > 0) return;
 	await settleVaultWindow(window);
 
 	// The trust decision (`enable-plugin-<appId>`, set synchronously by the

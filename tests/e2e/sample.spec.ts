@@ -61,6 +61,12 @@ test("最近2番目に開いたファイルが含まれる", async () => {
 	{
 		// Quick switcherを開く
 		await window.getByLabel("Open quick switcher", { exact: true }).click();
+		for (let i = 0; i < 8; i++) {
+			console.log(
+				`[diag] after qs click ${i} ${await window.evaluate(() => JSON.stringify({ t: Math.round(performance.now()), active: document.activeElement?.tagName + "." + document.activeElement?.className, modals: Array.from(document.querySelectorAll(".modal")).map((m) => m.className) }))}`,
+			);
+			await window.waitForTimeout(250);
+		}
 		const quickSwitcher = window.locator(":focus");
 		// Quick switcherに入力
 		await quickSwitcher.fill("hoge");

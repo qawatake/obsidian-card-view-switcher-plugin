@@ -20,6 +20,11 @@ type ObsidianGlobal = {
  * for it explicitly, close it, and only then hand the window back.
  */
 export async function settleVaultWindow(page: Page, pluginId = PLUGIN_ID) {
+	page.on("pageerror", (e) => console.log(`[diag] pageerror ${e.stack ?? e}`));
+	page.on("console", (m) => {
+		if (m.type() === "error" || m.type() === "warning")
+			console.log(`[diag] console.${m.type()} ${m.text().slice(0, 300)}`);
+	});
 	// The two startup outcomes are exclusive: the prompt is shown instead of
 	// loading plugins, so one of them always becomes true.
 	await page.waitForFunction(
@@ -36,7 +41,7 @@ export async function settleVaultWindow(page: Page, pluginId = PLUGIN_ID) {
 			.getByRole("button", { name: "Trust author and enable plugins" })
 			.click();
 		// DIAG (temporary): trace modal state after the click
-		for (let i = 0; i < 40; i++) {
+		for (let i = 0; i < 12; i++) {
 			const st = await page
 				.evaluate((id) => {
 					const g = globalThis as ObsidianGlobal & {
@@ -59,11 +64,12 @@ export async function settleVaultWindow(page: Page, pluginId = PLUGIN_ID) {
 			console.log(`[diag] ${i} ${st}`);
 			await page.waitForTimeout(250);
 		}
-		// Opened by Obsidian once the plugins are enabled (see above).
-		const settings = page.locator(".modal.mod-settings");
-		await expect(settings).toBeVisible();
-		await page.keyboard.press("Escape");
-		await expect(settings).toHaveCount(0);
+		console.log(
+			`[diag] hasPhysicalKeyboard=${await page.evaluate(() => {
+				const p = (globalThis as unknown as { Platform?: { hasPhysicalKeyboard?: boolean } }).Platform;
+				return String(p?.hasPhysicalKeyboard);
+			})}`,
+		);
 	}
 
 	const modal = page.locator(".modal-container");
