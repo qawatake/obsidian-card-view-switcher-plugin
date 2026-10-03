@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.4.7](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.6...0.4.7) - 2026-10-03
+
+### Changes
+- ci: tier Dependabot cooldown by semver level by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/61
+- build: bump electron to 43.3.0 (matches Obsidian 1.13.7) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/63
+- ci: let Dependabot bump electron majors; warn on drift from Obsidian's Electron by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/64
+- chore: sync dev-environment improvements from core-search-assistant by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/65
+- chore: schedule Dependabot on Saturday 03:00 JST by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/66
+- chore: use flat 7-day cooldown for github-actions by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/67
+- Tighten Dependabot and CI supply-chain policy by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/68
+- Check that config $schema versions match package.json by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/69
+- Align check-config-schema.mjs imports with Biome's order by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/70
+- Pin dependency ranges to the resolved versions by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/71
+- build: bump electron to 43.5.0 (security fixes within 43.x) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/72
+- build: update transitive undici to 7.29.1 (security fixes) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/73
+- chore: follow harden-deps (security fixes past the age gate, verify deps before run) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/74
+- build: update transitive devalue to 5.9.3 (security fixes) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/75
+- build: update transitive brace-expansion to 5.0.12 (security fixes) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/82
+- build(deps-dev): bump svelte from 5.56.8 to 5.57.1 by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/81
+- build(deps): bump Songmu/tagpr from 1.20.1 to 1.21.0 by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/77
+- build(deps): bump actions/checkout from 4.4.0 to 7.0.1 by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/76
+- build(deps): bump jdx/mise-action from 2.4.4 to 4.3.0 by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/79
+- build(deps-dev): bump the npm-minor-patch group across 1 directory with 6 updates by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/80
+- build(deps): bump softprops/action-gh-release from 2.6.2 to 3.0.3 by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/78
+- ci: fail the release when a listed asset is missing by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/83
+- e2e: wait out the vault trust prompt deterministically; disable updates from the main process by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/84
+- ci: upload Playwright test-results when an e2e job fails by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/85
+- build: main.js に bundle される svelte を dependencies に移す by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/86
+- build(deps-dev): bump @electron/asar from 4.3.0 to 4.3.1 in the npm-minor-patch group by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/87
+
 ## [0.4.6](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.5...0.4.6) - 2026-08-23
 
 ### Changes
