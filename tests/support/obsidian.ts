@@ -1,4 +1,4 @@
-import { expect, type Page } from "@playwright/test";
+import { type ElectronApplication, expect, type Page } from "@playwright/test";
 
 export const PLUGIN_ID = "obsidian-card-view-switcher-plugin";
 
@@ -7,24 +7,27 @@ type ObsidianGlobal = {
 };
 
 /**
- * Bring a freshly opened vault window to a quiet state: the plugin is loaded
- * and no modal is open. Call it before the first interaction.
+ * Bring a freshly opened vault window to a quiet state: the plugin is loaded,
+ * no modal is open and the vault window has the focus. Call it before the
+ * first interaction.
  *
  * On startup Obsidian either loads the community plugins, or, when the vault
- * is not trusted yet (`enable-plugin-<appId>` missing from localStorage), shows
- * the "Do you trust the author of this vault?" prompt instead. Clicking
- * "Trust author and enable plugins" closes that prompt at once, but the click
- * handler then awaits `plugins.setEnable(true)` and only afterwards opens
- * Settings > Community plugins as another modal. Anything done between the
- * two (opening the quick switcher, an evaluate) races with that modal, so wait
- * for it explicitly, close it, and only then hand the window back.
+ * is not trusted yet (`enable-plugin-<appId>` missing from localStorage),
+ * shows the "Do you trust the author of this vault?" prompt instead.
+ * "Trust author and enable plugins" keeps the prompt open while it awaits
+ * `plugins.setEnable(true)`, then opens Settings > Community plugins and only
+ * then closes the prompt. Obsidian 1.13 shows Settings in a separate window,
+ * which takes the focus: from then on the quick switcher and other modals open
+ * in that window, not in `page`, and `page` has nothing focused. Renderer
+ * evaluates issued while that window is being created can also fail with
+ * "Resulting promise was garbage collected". So wait for Settings to appear
+ * (wherever it is), close it, and give the focus back to `page`.
  */
-export async function settleVaultWindow(page: Page, pluginId = PLUGIN_ID) {
-	page.on("pageerror", (e) => console.log(`[diag] pageerror ${e.stack ?? e}`));
-	page.on("console", (m) => {
-		if (m.type() === "error" || m.type() === "warning")
-			console.log(`[diag] console.${m.type()} ${m.text().slice(0, 300)}`);
-	});
+export async function settleVaultWindow(
+	app: ElectronApplication,
+	page: Page,
+	pluginId = PLUGIN_ID,
+) {
 	// The two startup outcomes are exclusive: the prompt is shown instead of
 	// loading plugins, so one of them always becomes true.
 	await page.waitForFunction(
@@ -40,36 +43,26 @@ export async function settleVaultWindow(page: Page, pluginId = PLUGIN_ID) {
 		await trustPrompt
 			.getByRole("button", { name: "Trust author and enable plugins" })
 			.click();
-		// DIAG (temporary): trace modal state after the click
-		for (let i = 0; i < 12; i++) {
-			const st = await page
-				.evaluate((id) => {
-					const g = globalThis as ObsidianGlobal & {
-						app?: { setting?: { containerEl?: HTMLElement } };
-					};
-					return JSON.stringify({
-						t: Math.round(performance.now()),
-						modals: Array.from(
-							document.querySelectorAll(".modal-container"),
-						).map(
-							(c) =>
-								`${c.className} > ${c.querySelector(".modal")?.className}`,
-						),
-						settingConnected: !!g.app?.setting?.containerEl?.isConnected,
-						plugin: !!g.app?.plugins?.plugins?.[id],
-						active: document.activeElement?.className,
-					});
-				}, pluginId)
-				.catch((e) => `ERR ${e}`);
-			console.log(`[diag] ${i} ${st}`);
-			await page.waitForTimeout(250);
+
+		await expect
+			.poll(async () => (await findSettingsWindow(app)) !== undefined, {
+				message: "Settings should open after trusting the vault",
+			})
+			.toBe(true);
+		const settings = await findSettingsWindow(app);
+		if (settings === page) {
+			await page.keyboard.press("Escape");
+		} else {
+			// Closing the window closes the modal in it (Obsidian listens for
+			// `pagehide` on popout windows).
+			await settings?.close();
 		}
-		console.log(
-			`[diag] hasPhysicalKeyboard=${await page.evaluate(() => {
-				const p = (globalThis as unknown as { Platform?: { hasPhysicalKeyboard?: boolean } }).Platform;
-				return String(p?.hasPhysicalKeyboard);
-			})}`,
-		);
+		await expect
+			.poll(async () => (await findSettingsWindow(app)) === undefined, {
+				message: "Settings should be closed",
+			})
+			.toBe(true);
+		await page.bringToFront();
 	}
 
 	const modal = page.locator(".modal-container");
@@ -83,7 +76,26 @@ export async function settleVaultWindow(page: Page, pluginId = PLUGIN_ID) {
 	await expect(modal).toHaveCount(0);
 
 	await page.waitForFunction(
-		(id) => !!(globalThis as ObsidianGlobal).app?.plugins?.plugins?.[id],
+		(id) =>
+			document.hasFocus() &&
+			!!(globalThis as ObsidianGlobal).app?.plugins?.plugins?.[id],
 		pluginId,
 	);
+}
+
+/** The window showing Obsidian's Settings modal, if any. */
+async function findSettingsWindow(
+	app: ElectronApplication,
+): Promise<Page | undefined> {
+	for (const w of app.windows()) {
+		if (w.isClosed()) continue;
+		// A window that is being created or torn down can reject the query;
+		// treat it as "not there yet" and let the caller poll again.
+		const count = await w
+			.locator(".modal.mod-settings")
+			.count()
+			.catch(() => 0);
+		if (count > 0) return w;
+	}
+	return undefined;
 }

@@ -56,39 +56,11 @@ test.afterEach(async () => {
 test("最近2番目に開いたファイルが含まれる", async () => {
 	const window = await app.firstWindow();
 	// 起動時の modal (vault の信頼確認など) を片付け、plugin の読み込みを待つ
-	app.on("window", (w) => console.log(`[diag] new window event url=${w.url()}`));
-	window.on("framenavigated", (f) => {
-		if (f === window.mainFrame()) console.log(`[diag] main frame navigated ${f.url()}`);
-	});
-	window.on("load", () => console.log("[diag] load event"));
-	await settleVaultWindow(window);
+	await settleVaultWindow(app, window);
 	// ファイルhogeを開く
 	{
 		// Quick switcherを開く
 		await window.getByLabel("Open quick switcher", { exact: true }).click();
-		for (const [k, w] of app.windows().entries()) {
-			console.log(
-				`[diag] window ${k} url=${w.url()} same=${w === window} info=${await w
-					.evaluate(() =>
-						JSON.stringify({
-							t: Math.round(performance.now()),
-							focus: document.hasFocus(),
-							title: document.title,
-							modals: Array.from(document.querySelectorAll(".modal")).map(
-								(m) => m.className,
-							),
-							nav: performance.getEntriesByType("navigation").map((n) => (n as PerformanceNavigationTiming).type),
-						}),
-					)
-					.catch((e) => `ERR ${e}`)}`,
-			);
-		}
-		for (let i = 0; i < 3; i++) {
-			console.log(
-				`[diag] after qs click ${i} ${await window.evaluate(() => JSON.stringify({ t: Math.round(performance.now()), active: document.activeElement?.tagName + "." + document.activeElement?.className, modals: Array.from(document.querySelectorAll(".modal")).map((m) => m.className) }))}`,
-			);
-			await window.waitForTimeout(250);
-		}
 		const quickSwitcher = window.locator(":focus");
 		// Quick switcherに入力
 		await quickSwitcher.fill("hoge");
