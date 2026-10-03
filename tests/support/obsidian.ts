@@ -35,6 +35,30 @@ export async function settleVaultWindow(page: Page, pluginId = PLUGIN_ID) {
 		await trustPrompt
 			.getByRole("button", { name: "Trust author and enable plugins" })
 			.click();
+		// DIAG (temporary): trace modal state after the click
+		for (let i = 0; i < 40; i++) {
+			const st = await page
+				.evaluate((id) => {
+					const g = globalThis as ObsidianGlobal & {
+						app?: { setting?: { containerEl?: HTMLElement } };
+					};
+					return JSON.stringify({
+						t: Math.round(performance.now()),
+						modals: Array.from(
+							document.querySelectorAll(".modal-container"),
+						).map(
+							(c) =>
+								`${c.className} > ${c.querySelector(".modal")?.className}`,
+						),
+						settingConnected: !!g.app?.setting?.containerEl?.isConnected,
+						plugin: !!g.app?.plugins?.plugins?.[id],
+						active: document.activeElement?.className,
+					});
+				}, pluginId)
+				.catch((e) => `ERR ${e}`);
+			console.log(`[diag] ${i} ${st}`);
+			await page.waitForTimeout(250);
+		}
 		// Opened by Obsidian once the plugins are enabled (see above).
 		const settings = page.locator(".modal.mod-settings");
 		await expect(settings).toBeVisible();
