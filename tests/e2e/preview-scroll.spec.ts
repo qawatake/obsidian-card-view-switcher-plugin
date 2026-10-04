@@ -86,6 +86,16 @@ for (const { name, down, up } of [
 			window.locator(".modal-container .modal .content-container"),
 		).toContainText("line 1");
 
+		// 中身のレイアウトが終わり、preview がスクロールできるようになるのを待つ
+		await expect
+			.poll(() =>
+				window.evaluate(() => {
+					const modal = document.querySelector(".modal-container .modal");
+					return modal ? modal.scrollHeight - modal.clientHeight : 0;
+				}),
+			)
+			.toBeGreaterThan(1000);
+
 		const initial = await previewScrollOffset(window);
 
 		for (let i = 0; i < 5; i++) {

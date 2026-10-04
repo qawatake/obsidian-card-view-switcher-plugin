@@ -198,9 +198,13 @@ export class PreviewModal extends Modal {
 		// one is heading; otherwise repeated keys would not add up.
 		const maxTop = modalEl.scrollHeight - modalEl.clientHeight;
 		const from = this.scrollTarget ?? modalEl.scrollTop;
-		this.scrollTarget = Math.min(Math.max(from + move, 0), maxTop);
+		const target = Math.min(Math.max(from + move, 0), maxTop);
+		// No scroll happens (e.g. at the edge, or before the content is laid
+		// out), so no scrollend comes to clear the target: do not keep it.
+		this.scrollTarget =
+			Math.abs(target - modalEl.scrollTop) < 1 ? undefined : target;
 		modalEl.scrollTo({
-			top: this.scrollTarget,
+			top: target,
 			behavior: "smooth",
 		});
 	}
