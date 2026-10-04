@@ -91,7 +91,8 @@ export function focusOn(matchId: number, center?: boolean) {
 		for a note. Widen it instead of letting the content stick out of it, so
 		the preview never scrolls sideways.
 	*/
-	:global(.modal.card-view-switcher-preview-modal) {
+	/* phones already use a full-screen modal */
+	:global(body:not(.is-phone) .modal.card-view-switcher-preview-modal) {
 		width: min(1000px, 90vw);
 		max-width: 90vw;
 	}
