@@ -2,10 +2,9 @@ import { defineConfig } from "@playwright/test";
 
 // See https://playwright.dev/docs/test-configuration.
 export default defineConfig({
-	fullyParallel: false,
-	// Each test drives its own Obsidian window with the keyboard and waits for
-	// it to have the focus, so two of them cannot run side by side.
-	workers: 1,
+	// Each test runs its own Obsidian on its own vault copy and user data dir
+	// (tests/support/obsidian.ts), so tests can run side by side.
+	fullyParallel: true,
 	forbidOnly: !!process.env["CI"],
 	use: {
 		trace: "retain-on-failure",
