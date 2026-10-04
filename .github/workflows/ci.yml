@@ -41,6 +41,8 @@ jobs:
       # main.js に bundle された package が dependencies から辿れるか。devDependencies のままだと
       # GitHub の preset rule が development-scoped として alert を auto-dismiss する
       - run: node scripts/check-bundled-deps.mjs
+      # Svelte の scope class が plugin 固有 prefix か。既定の svelte-<hash> だと同構成の別 plugin と衝突する
+      - run: node scripts/check-css-namespace.mjs
 
   e2e:
     runs-on: macos-latest

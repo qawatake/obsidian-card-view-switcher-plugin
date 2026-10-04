@@ -91,12 +91,12 @@ export function focusOn(matchId: number, center?: boolean) {
 	}
 
 	.content-container :global(.highlight-search-match) {
-		color: var(--highlight-search-match);
-		background-color: var(--highlight-search-match-bg);
+		color: var(--card-view-switcher-highlight-search-match);
+		background-color: var(--card-view-switcher-highlight-search-match-bg);
 	}
 
 	.content-container :global(.focus-search-match) {
-		background-color: var(--focus-search-match-bg);
+		background-color: var(--card-view-switcher-focus-search-match-bg);
 	}
 
 	/*
