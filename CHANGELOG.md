@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.10](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.9...0.4.10) - 2026-10-04
+
+### Changes
+- fix: stop the IME commit Enter from opening a file in the switcher by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/100
+
 ## [0.4.9](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.8...0.4.9) - 2026-10-04
 
 ### Changes
