@@ -1,5 +1,13 @@
 import type CardViewSwitcherPlugin from "main";
-import { type App, Component, Notice, Scope, TFile } from "obsidian";
+import {
+	type App,
+	Component,
+	type KeymapEventListener,
+	type Modifier,
+	Notice,
+	Scope,
+	TFile,
+} from "obsidian";
 import Modal from "ui/Modal.svelte";
 import * as store from "ui/store";
 import { generateInternalLinkFrom } from "utils/Link";
@@ -65,20 +73,20 @@ export class Switcher extends Component {
 		this.app.keymap.pushScope(this.scope);
 
 		hotkeyMap.selectPrevious.forEach((hotkey) => {
-			this.scope?.register(hotkey.modifiers, hotkey.key, (evt) => {
+			this.registerHotkey(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault(); // to prevent cursor from moving to the start position
 				this.modal?.["navigateBack"]();
 			});
 		});
 		hotkeyMap.selectNext.forEach((hotkey) => {
-			this.scope?.register(hotkey.modifiers, hotkey.key, (evt) => {
+			this.registerHotkey(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault(); // to prevent cursor from moving to the end position
 				this.modal?.["navigateForward"]();
 			});
 		});
 		if (!this.app.vault.config.legacyEditor) {
 			hotkeyMap.openPreviewModal.forEach((hotkey) => {
-				this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
+				this.registerHotkey(hotkey.modifiers, hotkey.key, (evt) => {
 					evt.preventDefault();
 					const result = this.modal?.["selectedResult"]();
 					if (result === undefined) return;
@@ -93,25 +101,25 @@ export class Switcher extends Component {
 			});
 		}
 		hotkeyMap.open.forEach((hotkey) => {
-			this.scope?.register(hotkey.modifiers, hotkey.key, (evt) => {
+			this.registerHotkey(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
 				this.modal?.["open"]();
 			});
 		});
 		hotkeyMap.openInNewPaneHorizontally.forEach((hotkey) => {
-			this.scope?.register(hotkey.modifiers, hotkey.key, (evt) => {
+			this.registerHotkey(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
 				this.modal?.["open"]("horizontal");
 			});
 		});
 		hotkeyMap.openInNewPaneVertically.forEach((hotkey) => {
-			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
+			this.registerHotkey(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
 				this.modal?.["open"]("vertical");
 			});
 		});
 		hotkeyMap.copyLink.forEach((hotkey) => {
-			this.scope.register(hotkey.modifiers, hotkey.key, (evt) => {
+			this.registerHotkey(hotkey.modifiers, hotkey.key, (evt) => {
 				evt.preventDefault();
 				const result = this.modal?.["selectedResult"]();
 				if (!result) return;
@@ -120,9 +128,22 @@ export class Switcher extends Component {
 				new Notice("copy internal link!");
 			});
 		});
-		this.scope?.register([], "Escape", (evt) => {
+		this.registerHotkey([], "Escape", (evt) => {
 			evt.preventDefault();
 			this.unload();
+		});
+	}
+
+	// While an IME is composing, keys such as Enter (commit), arrows (pick a
+	// candidate) and Escape (cancel) belong to the IME, not to the switcher.
+	private registerHotkey(
+		modifiers: Modifier[],
+		key: string | null,
+		func: KeymapEventListener,
+	) {
+		this.scope.register(modifiers, key, (evt, ctx) => {
+			if (evt.isComposing) return;
+			return func(evt, ctx);
 		});
 	}
 
