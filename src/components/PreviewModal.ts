@@ -44,6 +44,8 @@ export class PreviewModal extends Modal {
 	}
 
 	override async onOpen() {
+		// widen the modal (see PreviewModalContent.svelte)
+		this.modalEl.addClass("card-view-switcher-preview-modal");
 		this.renderView();
 		this.modalEl.addEventListener("scrollend", () => {
 			this.scrollTarget = undefined;

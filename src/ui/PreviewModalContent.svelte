@@ -86,8 +86,21 @@ export function focusOn(matchId: number, center?: boolean) {
 <div class="content-container" bind:this={contentContainerEl} />
 
 <style>
+	/*
+		Obsidian's modal is only --dialog-width (560px) wide, which is too narrow
+		for a note. Widen it instead of letting the content stick out of it, so
+		the preview never scrolls sideways.
+	*/
+	/* phones already use a full-screen modal */
+	:global(body:not(.is-phone) .modal.card-view-switcher-preview-modal) {
+		width: min(1000px, 90vw);
+		max-width: 90vw;
+	}
+
 	.content-container {
-		min-width: 700px;
+		/* wide content (tables, kanban boards, ...) scrolls here, not the modal */
+		overflow-x: auto;
+		overflow-wrap: anywhere;
 	}
 
 	.content-container :global(.highlight-search-match) {
