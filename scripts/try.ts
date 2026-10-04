@@ -98,6 +98,14 @@ try {
 	app = await launchObsidian({ dir: session, pluginSource });
 	const page = await app.firstWindow();
 	await settleVaultWindow(app, page);
+	// The keyboard would still talk to the terminal: Obsidian started from it is
+	// not the active app, and no window has the OS focus once the Settings
+	// window that trusting the vault opens is closed. (The tests do not notice:
+	// Playwright sends keys into the page, not through the OS.)
+	await app.evaluate(({ app, BrowserWindow }) => {
+		app.focus({ steal: true });
+		BrowserWindow.getAllWindows()[0]?.focus();
+	});
 	console.log(
 		`[try] Obsidian is up (${pr === undefined ? "this checkout" : `PR #${pr}`}). Close all its windows to clean up.`,
 	);
