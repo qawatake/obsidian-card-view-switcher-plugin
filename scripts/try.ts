@@ -1,8 +1,9 @@
 // Open the plugin in a throw-away Obsidian to try it by hand.
 //
-// USAGE: pnpm try        # build this checkout and open it
+// USAGE: pnpm try        # open the release PR tagpr opened (this checkout if there is none)
 //        pnpm try <PR>   # check out pull request <PR> in a git worktree, build it there and open it
 //                        # <PR>: 93, #93 or its URL (https://github.com/.../pull/93/changes etc.)
+//        pnpm try .      # build this checkout and open it
 //
 // Obsidian starts on a copy of tests/test-vault with its own user data dir
 // (see launchObsidian), so it touches neither your everyday Obsidian nor the
@@ -29,12 +30,22 @@ const PID_FILE = "pid";
 
 const root = process.cwd();
 const prArg = process.argv[2];
-const pr = prArg === undefined ? undefined : parsePullRequest(prArg);
-if (prArg !== undefined && pr === undefined) {
-	console.error(
-		`usage: pnpm try [<PR number> | <PR URL of this repository>] (got ${prArg})`,
+let pr: string | undefined;
+if (prArg === undefined) {
+	pr = findReleasePullRequest();
+	console.log(
+		pr === undefined
+			? "[try] no open release PR by tagpr, trying this checkout"
+			: `[try] trying the release PR by tagpr (#${pr})`,
 	);
-	process.exit(1);
+} else if (prArg !== ".") {
+	pr = parsePullRequest(prArg);
+	if (pr === undefined) {
+		console.error(
+			`usage: pnpm try [<PR number> | <PR URL of this repository> | .] (got ${prArg})`,
+		);
+		process.exit(1);
+	}
 }
 try {
 	await fs.access(path.join(root, ".obsidian-unpacked", "main.js"));
@@ -112,6 +123,19 @@ try {
 	await waitForAllWindowsClosed(app);
 } finally {
 	await cleanup();
+}
+
+/** The open release PR tagpr maintains (it labels it `tagpr`), if any. */
+function findReleasePullRequest(): string | undefined {
+	const number = execFileSync(
+		"gh",
+		[
+			...["pr", "list", "--label", "tagpr", "--state", "open"],
+			...["--json", "number", "--jq", ".[0].number"],
+		],
+		{ cwd: root, encoding: "utf8" },
+	).trim();
+	return number === "" ? undefined : number;
 }
 
 /**
