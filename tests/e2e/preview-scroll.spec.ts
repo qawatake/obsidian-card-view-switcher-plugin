@@ -27,6 +27,17 @@ async function previewScrollOffset(window: Page): Promise<number> {
 	});
 }
 
+/** The scroll offset once the preview has stopped moving. */
+async function settledScrollOffset(window: Page): Promise<number> {
+	let last = await previewScrollOffset(window);
+	for (;;) {
+		await window.waitForTimeout(200);
+		const current = await previewScrollOffset(window);
+		if (Math.abs(current - last) < 1) return current;
+		last = current;
+	}
+}
+
 for (const { name, down, up } of [
 	{ name: "↓ / ↑", down: "ArrowDown", up: "ArrowUp" },
 	{ name: "Ctrl+N / Ctrl+P", down: "Control+n", up: "Control+p" },
@@ -74,7 +85,8 @@ for (const { name, down, up } of [
 				message: `${down} should scroll the preview down`,
 			})
 			.toBeGreaterThan(initial + 100);
-		const scrolled = await previewScrollOffset(window);
+		// スクロールは smooth なので、止まるのを待ってから戻りの基準位置を取る
+		const scrolled = await settledScrollOffset(window);
 
 		for (let i = 0; i < 5; i++) {
 			await window.keyboard.press(up);
@@ -84,5 +96,12 @@ for (const { name, down, up } of [
 				message: `${up} should scroll the preview up`,
 			})
 			.toBeLessThan(scrolled - 100);
+		// 下と同じ回数だけ上に送ると先頭に戻る。キーが preview 内の editor に
+		// 届くと、cursor が動いて scrollIntoView され、スクロールが途中で止まる
+		await expect
+			.poll(() => settledScrollOffset(window), {
+				message: `${up} should scroll back to where ${down} started`,
+			})
+			.toBeCloseTo(initial, 0);
 	});
 }
