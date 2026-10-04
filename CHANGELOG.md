@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.9](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.8...0.4.9) - 2026-10-04
+
+### Changes
+- fix: stop keys from dying in Settings after pressing the add-hotkey button twice by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/98
+
 ## [0.4.8](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.7...0.4.8) - 2026-10-04
 
 ### Changes
