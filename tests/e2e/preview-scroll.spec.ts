@@ -1,50 +1,18 @@
-import test, {
-	type Dialog,
-	expect,
-	type ElectronApplication,
-	type Page,
-	_electron as electron,
-} from "@playwright/test";
-import fs from "node:fs/promises";
-import path from "node:path";
-import { settleVaultWindow } from "../support/obsidian";
-
-const appPath = path.resolve("./.obsidian-unpacked/main.js");
-const vaultPath = path.resolve("./tests/test-vault");
+import test, { type ElectronApplication, expect, type Page } from "@playwright/test";
+import {
+	closeObsidian,
+	launchObsidian,
+	settleVaultWindow,
+} from "../support/obsidian";
 
 let app: ElectronApplication;
 
 test.beforeEach(async () => {
-	await fs.rm(path.join(vaultPath, ".obsidian", "workspace.json"), {
-		recursive: true,
-		force: true,
-	});
-
-	app = await electron.launch({
-		args: [
-			appPath,
-			"open",
-			`obsidian://open?path=${encodeURIComponent(vaultPath)}`,
-		],
-	});
-
-	const handleDialogs = (page: Page) => {
-		page.on("dialog", (dialog: Dialog) => dialog.accept().catch(() => {}));
-	};
-	app.on("window", handleDialogs);
-	for (const page of app.windows()) {
-		handleDialogs(page);
-	}
+	app = await launchObsidian();
 });
 
 test.afterEach(async () => {
-	if (!app) return;
-	const obsidianProcess = app.process();
-	await Promise.race([
-		app.close(),
-		new Promise((resolve) => setTimeout(resolve, 15_000)),
-	]);
-	obsidianProcess.kill();
+	if (app) await closeObsidian(app);
 });
 
 /** How far the preview content has moved up inside the preview modal. */
