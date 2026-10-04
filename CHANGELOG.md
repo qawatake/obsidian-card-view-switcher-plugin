@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.8](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.7...0.4.8) - 2026-10-04
+
+### Changes
+- fix: preview modal で ↑↓ / Ctrl+N/P などのスクロールが効かないのを直す by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/88
+- e2e: 使い捨ての user data dir と vault のコピーで Obsidian を起動する by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/90
+- e2e: テストを並列で流す by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/91
+- e2e: テストを1つずつ流すのに戻す by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/92
+- fix: core-search-assistant と併用すると card view の CSS が衝突するのを直す by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/93
+- fix: preview modal が横にスクロールしてしまうのを直す by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/94
+- dev: open a throw-away Obsidian with pnpm try for manual checks by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/96
+- dev: pnpm try without arguments opens the release PR by tagpr by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/97
+
 ## [0.4.7](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.6...0.4.7) - 2026-10-03
 
 ### Changes
