@@ -1,15 +1,19 @@
 /*
+	このplugin専用の変数。他 plugin (core-search-assistant など) と名前が衝突しないよう prefix を付ける。
+*/
+
+/*
 	text color
 */
-span {
-	--highlight-search-match: var(--text-normal);
+body {
+	--card-view-switcher-highlight-search-match: var(--text-normal);
 }
 
 /*
 	background color
 */
 
-span {
-	--highlight-search-match-bg: var(--text-highlight-bg);
-	--focus-search-match-bg: #ff9633;
+body {
+	--card-view-switcher-highlight-search-match-bg: var(--text-highlight-bg);
+	--card-view-switcher-focus-search-match-bg: #ff9633;
 }

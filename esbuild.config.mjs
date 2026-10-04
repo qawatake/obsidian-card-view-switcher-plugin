@@ -1,5 +1,5 @@
 import esbuild from 'esbuild';
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { builtinModules } from 'node:module';
 import process from 'process';
 import sveltePlugin from 'esbuild-svelte';
@@ -11,6 +11,10 @@ if you want to view the source, please visit the github repository of this plugi
 `;
 
 const prod = process.argv[2] === 'production';
+
+// scripts/check-css-namespace.mjs もこの prefix を見る。
+const CSS_HASH_PREFIX = 'card-view-switcher-';
+const PLUGIN_ID = JSON.parse(readFileSync('manifest.json', 'utf8')).id;
 
 const context = await esbuild.context({
 	banner: {
@@ -31,6 +35,12 @@ const context = await esbuild.context({
 		sveltePlugin({
 			compilerOptions: {
 				css: 'injected',
+				// Svelte の既定の scope class は `svelte-${hash(相対 path)}` で、`<style id>` にも同じ値が使われる。
+				// 同じ構成の plugin (core-search-assistant など) と `src/ui/CardContainer.svelte` のような
+				// 同名 file があると class と style id が衝突し、先に注入された側の CSS が両方に効いてしまう。
+				// plugin 固有の prefix と plugin id を混ぜた hash で namespace を分ける。
+				cssHash: ({ hash, css, filename }) =>
+					`${CSS_HASH_PREFIX}${hash(`${PLUGIN_ID}:${filename ?? css}`)}`,
 				preserveComments: !prod,
 				// Keep the Svelte 4 class component API (new Component(), $set,
 				// $destroy) working under Svelte 5.
