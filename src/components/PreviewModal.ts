@@ -23,6 +23,8 @@ export class PreviewModal extends Modal {
 	private readonly file: TFile;
 	private readonly matches: SearchMatches;
 	private previewContent: PreviewModalContent | undefined;
+	// where an ongoing smooth scroll is heading
+	private scrollTarget: number | undefined;
 
 	currentFocus: number | undefined;
 
@@ -43,6 +45,9 @@ export class PreviewModal extends Modal {
 
 	override async onOpen() {
 		this.renderView();
+		this.modalEl.addEventListener("scrollend", () => {
+			this.scrollTarget = undefined;
+		});
 
 		const hotkeyMap = this.plugin.settings?.previewModalHotkeys;
 		if (!hotkeyMap) return;
@@ -185,11 +190,17 @@ export class PreviewModal extends Modal {
 	}
 
 	private scroll(direction: ScrollDirection, px?: number) {
-		const { containerEl, contentEl } = this;
+		const { containerEl, modalEl } = this;
 		const move =
 			(px ?? containerEl.clientHeight / 2) * (direction === "up" ? -1 : 1);
-		contentEl.scrollBy({
-			top: move,
+		// The scroll container is modalEl: contentEl just grows with its content.
+		// A new smooth scroll cancels the ongoing one, so start from where that
+		// one is heading; otherwise repeated keys would not add up.
+		const maxTop = modalEl.scrollHeight - modalEl.clientHeight;
+		const from = this.scrollTarget ?? modalEl.scrollTop;
+		this.scrollTarget = Math.min(Math.max(from + move, 0), maxTop);
+		modalEl.scrollTo({
+			top: this.scrollTarget,
 			behavior: "smooth",
 		});
 	}
