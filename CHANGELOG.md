@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.11](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.10...0.4.11) - 2026-10-10
+
+### Changes
+- build(deps-dev): bump the npm-minor-patch group with 4 updates by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/104
+- build(deps): bump Songmu/tagpr from 1.21.0 to 1.21.1 by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/103
+- build(deps): bump jdx/mise-action from 4.3.0 to 5.0.1 by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/102
+
 ## [0.4.10](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.9...0.4.10) - 2026-10-04
 
 ### Changes
