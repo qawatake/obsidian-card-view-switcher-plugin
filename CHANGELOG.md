@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.4.11](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.10...0.4.11) - 2026-10-17
+
+### Changes
+- build(deps-dev): bump the npm-minor-patch group with 4 updates by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/104
+- build(deps): bump Songmu/tagpr from 1.21.0 to 1.21.1 by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/103
+- build(deps): bump jdx/mise-action from 4.3.0 to 5.0.1 by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/102
+- ci: propagate needs-release label to the tagpr PR by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/106
+- ci: label PRs needs-release / no-release by diffing built artifacts by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/107
+- build(deps): bump jdx/mise-action from 5.0.1 to 5.1.1 by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/108
+- build(deps): bump svelte from 5.57.1 to 5.57.2 by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/112
+- build(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/110
+- build(deps): bump Songmu/tagpr from 1.21.1 to 1.21.2 by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/109
+- build(deps-dev): bump the npm-minor-patch group across 1 directory with 4 updates by @dependabot[bot] in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/113
+
 ## [0.4.10](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.9...0.4.10) - 2026-10-04
 
 ### Changes
