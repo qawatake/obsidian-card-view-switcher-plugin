@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.13](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.12...0.4.13) - 2026-11-07
+
+### Changes
+- Make dependabot.yml security-only; version updates move to tsugiki by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/127
+- Weekly dependency updates (2026-11-07, 2 commits) by @qawatake in https://github.com/qawatake/obsidian-card-view-switcher-plugin/pull/129
+
 ## [0.4.12](https://github.com/qawatake/obsidian-card-view-switcher-plugin/compare/0.4.11...0.4.12) - 2026-11-07
 
 ### Changes
